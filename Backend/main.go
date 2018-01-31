@@ -2,51 +2,20 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"net/http"
 
-	"github.com/tealeg/xlsx"
-	models "github.com/twitchguy/SeaGnome/Backend/Models"
+	"github.com/twitchguy/SeaGnome/Backend/handlers"
 )
 
 func main() {
-	excelFileName := "../test.xlsx"
 
-	xlFile, err := xlsx.OpenFile(excelFileName)
+	http.HandleFunc("/ping", handlers.Ping)
+	http.HandleFunc("/excel", handlers.Excel)
+	fmt.Println("Registering handlers.")
+	fmt.Println("Server listening to 8080")
+	fmt.Println("Press Ctrl + C to exit.")
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		fmt.Println(err)
 	}
-	var users []models.User
-	for i, sheet := range xlFile.Sheets {
-		if i < 1 {
-			for j := range sheet.Rows {
-				var user models.User
-				for k := range sheet.Cols {
-					column := sheet.Cell(0, k).String()
-					data := sheet.Cell(j, k).String()
-
-					if column == "Timestamp" {
-						user.Timestamp = data
-					}
-					if strings.Contains(column, "Twitch Username") {
-						user.Twitch = data
-					}
-					if strings.Contains(column, "Twitter") {
-						user.Twitter = data
-					}
-					if strings.Contains(column, "TIE BREAKER") {
-						user.TieBreakerTime = data
-					}
-					if strings.Contains(column, "Predictions") {
-						user.Predictions = append(user.Predictions, data)
-
-					}
-					if strings.Contains(column, "Bonus Question") {
-						user.BonusQuestion = data
-					}
-				}
-				users = append(users, user)
-			}
-		}
-	}
-	fmt.Println(users[1])
 }
