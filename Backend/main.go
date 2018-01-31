@@ -4,32 +4,18 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/asdine/storm"
 	"github.com/tealeg/xlsx"
 	models "github.com/twitchguy/SeaGnome/Backend/Models"
-	"github.com/twitchguy/SeaGnome/Backend/db"
 )
-
-var stormDB *storm.DB
 
 func main() {
 	excelFileName := "../test.xlsx"
-	stormDB, err := db.InitDB("my.db")
-	if err != nil {
-		fmt.Println("Database couldn't open", err)
-		panic(err)
-	}
-
-	err = db.InitBuckets(stormDB)
-	if err != nil {
-		fmt.Println(err)
-	}
 
 	xlFile, err := xlsx.OpenFile(excelFileName)
 	if err != nil {
 		fmt.Println(err)
 	}
-
+	var users []models.User
 	for i, sheet := range xlFile.Sheets {
 		if i < 1 {
 			for j := range sheet.Rows {
@@ -58,20 +44,9 @@ func main() {
 						user.BonusQuestion = data
 					}
 				}
-				err := stormDB.Save(&user)
-				if err != nil {
-					// fmt.Println(err)
-				}
-
+				users = append(users, user)
 			}
-
 		}
 	}
-
-	var users []models.User
-	err = stormDB.All(&users)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(users)
+	fmt.Println(users[1])
 }
