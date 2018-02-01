@@ -4,26 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/asdine/storm"
 	"github.com/tealeg/xlsx"
-	models "github.com/twitchguy/SeaGnome/Backend/Models"
-	"github.com/twitchguy/SeaGnome/Backend/db"
-)
 
-var stormDB *storm.DB
+	"github.com/trystanhumann/SeaGnome/Backend/models"
+)
 
 func main() {
 	excelFileName := "../test.xlsx"
-	stormDB, err := db.InitDB("my.db")
-	if err != nil {
-		fmt.Println("Database couldn't open", err)
-		panic(err)
-	}
-
-	err = db.InitBuckets(stormDB)
-	if err != nil {
-		fmt.Println(err)
-	}
 
 	xlFile, err := xlsx.OpenFile(excelFileName)
 	if err != nil {

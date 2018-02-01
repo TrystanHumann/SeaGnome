@@ -1,19 +1,19 @@
 package models
 
 type User struct {
-	ID             int      `storm:"id,increment"`
-	Timestamp      string   `storm:index`
-	Twitch         string   `storm:unique`
-	Twitter        string   `storm:index`
-	Predictions    []string `storm:index`
-	TieBreakerTime string   `storm:index`
-	BonusQuestion  string   `storm:index`
+	ID             int
+	Timestamp      string
+	Twitch         string
+	Twitter        string
+	Predictions    []string
+	TieBreakerTime string
+	BonusQuestion  string
 }
 
 type Results struct {
 	ID            int
-	Game          string `storm:index`
+	Game          string
 	Winner        string
 	ScheduledDate string
-	Completed     string `storm:index`
+	Completed     string
 }
