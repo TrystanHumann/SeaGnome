@@ -17,7 +17,7 @@ func Ping(w http.ResponseWriter, r *http.Request) {
 
 //Excel ... Format excel
 func Excel(w http.ResponseWriter, r *http.Request) {
-	excelFileName := "../test.xlsx"
+	excelFileName := "../test1.csv"
 
 	xlFile, err := xlsx.OpenFile(excelFileName)
 	if err != nil {
