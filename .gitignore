@@ -1,1 +1,4 @@
 *.xlsx
+Backend/env/*
+*.exe
+debug

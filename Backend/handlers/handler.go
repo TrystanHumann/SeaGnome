@@ -7,12 +7,17 @@ import (
 	"strings"
 
 	"github.com/tealeg/xlsx"
-	models "github.com/twitchguy/SeaGnome/Backend/Models"
+
+	"github.com/trystanhumann/SeaGnome/Backend/data"
+	"github.com/trystanhumann/SeaGnome/Backend/models"
 )
 
 //Ping ... Test
 func Ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Pong!"))
+
+	// Test Function Call so the data package is included in build
+	data.Test()
 }
 
 //Excel ... Format excel
