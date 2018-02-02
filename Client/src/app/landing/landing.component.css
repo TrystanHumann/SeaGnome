@@ -1,0 +1,64 @@
+.title {
+    font-size:64px;
+    color: rgb(255, 255, 255);
+    text-shadow:
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000;  
+}
+.fullscreen {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    background: #222222 url("../../assets/test.jpg"); 
+    
+    background-repeat: no-repeat;
+    background-size: cover;
+    width:100%;
+}
+.buttonContainer{
+    text-align:right;
+    width:64.5%;
+    padding-top:3px;
+}
+
+.fillUp {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    width:100%;
+}
+.colorful{
+    font-size: 30px;
+    font-weight: 300;
+    width: 30%;
+    color: rgb(255, 255, 255);
+    opacity:0.9;
+    background: black;
+    text-align: center;
+    outline: none;
+    border: 0px;
+    border-radius:15px;
+}
+.centerStuff{
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    text-align:center;
+}
+.twitch-screen{
+    padding-top:50px;
+    position:absolute;
+    top:30%;
+    height:100%;
+    width:100%;
+
+}
