@@ -1,0 +1,146 @@
+<div class="container" style="width:100%;margin-right:0px;border:solid yellow;">
+  <div class="row" style="width:100%;margin-right:0px;border:solid brown">
+    <div class="col-lg-4" style="border:solid black">
+      <h1>Leader Board</h1>
+      <div class="row" style="width:100%;border:solid purple;">
+        <div class="col-lg-12">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of this.testLeader">
+                <td> {{user.username }}</td>
+                <td> {{ user.score }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8" style="border:solid pink">
+      <h1>Next Games</h1>
+      <div class="row" style="width:100%;border:solid purple;">
+        <div class="col-lg-12">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Upcoming Games</th>
+                <th>Spikevega favored</th>
+                <th>Iateyourpie favored </th>
+                <th>Abstain</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let gameResult of this.gamesBoard">
+                <td>{{gameResult.title}}</td>
+                <td>{{gameResult.favorOnePercent}}</td>
+                <td>{{gameResult.favorTwoPercent}}</td>
+                <td>{{gameResult.abstainPercentage}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-lg-6" style="border:solid purple;">
+          <h3>{{RunnerOne.username}} has won {{RunnerOne.score}} out of {{RunnerOne.gamesPlayed}} matches.</h3>
+          <h3>{{RunnerTwo.username}} has won {{RunnerTwo.score}} out of {{RunnerTwo.gamesPlayed}} matches.</h3>
+        </div>
+        <div class="col-lg-6" style="border:solid purple;">
+          Empty Data place holder data Empty Data place holder data
+          <br> Empty Data place holder data Empty Data place holder data
+          <br> Empty Data place holder data Empty Data place holder data
+          <br> Empty Data place holder data Empty Data place holder data
+        </div>
+      </div>
+      <div>
+        <h1>User Card</h1>
+        <div class="row" style="border:solid black">
+          <div class="col-lg-12">
+            <input type="text" name="firstname" placeholder="Search Username" style="border-radius:5px;height:25px;">
+          </div>
+        </div>
+        <!-- Searched User -->
+        <div class="row" style="border:solid black">
+          <div class="col-lg-4">
+            <h3>Username here</h3>
+            <table>
+              <tr>
+                <th>Current Raw Score:</th>
+                <td>69</td>
+              </tr>
+              <tr>
+                <th>Current % Score:</th>
+                <td>420%</td>
+              </tr>
+              <tr>
+                <th>Leaderboard placement:</th>
+                <td>13</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-lg-4" style="border:solid black;">
+            <h3>Future Predictions</h3>
+          </div>
+          <div class="col-lg-4" style="border:solid black;">
+            <h3>Past Predictions</h3>
+          </div>
+        </div>
+        <!-- Best User -->
+        <div class="row" style="border:solid black">
+          <div class="col-lg-4">
+            <h3>Best Username here</h3>
+            <table>
+              <tr>
+                <th>Current Raw Score:</th>
+                <td>69</td>
+              </tr>
+              <tr>
+                <th>Current % Score:</th>
+                <td>420%</td>
+              </tr>
+              <tr>
+                <th>Leaderboard placement:</th>
+                <td>13</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-lg-4" style="border:solid black;">
+            <h3>Future Predictions</h3>
+          </div>
+          <div class="col-lg-4" style="border:solid black;">
+            <h3>Past Predictions</h3>
+          </div>
+        </div>
+        <!-- Worst User -->
+        <div class="row" style="border:solid black">
+          <div class="col-lg-4">
+            <h3>Worst Username here</h3>
+            <table>
+              <tr>
+                <th>Current Raw Score:</th>
+                <td>69</td>
+              </tr>
+              <tr>
+                <th>Current % Score:</th>
+                <td>420%</td>
+              </tr>
+              <tr>
+                <th>Leaderboard placement:</th>
+                <td>13</td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-lg-4" style="border:solid black;">
+            <h3>Future Predictions</h3>
+          </div>
+          <div class="col-lg-4" style="border:solid black;">
+            <h3>Past Predictions</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
