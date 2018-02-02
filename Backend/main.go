@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/twitchguy/SeaGnome/Backend/handlers"
+	"github.com/trystanhumann/SeaGnome/Backend/handlers"
 )
 
 func main() {

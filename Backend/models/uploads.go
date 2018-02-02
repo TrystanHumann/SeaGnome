@@ -1,5 +1,6 @@
 package models
 
+// User : Represents a user from the uploaded csv
 type User struct {
 	ID             int
 	Timestamp      string
@@ -10,7 +11,8 @@ type User struct {
 	BonusQuestion  string
 }
 
-type Results struct {
+// Result : Represents a Result from the uploaded csv
+type Result struct {
 	ID            int
 	Game          string
 	Winner        string
