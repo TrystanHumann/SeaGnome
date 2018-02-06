@@ -2,3 +2,4 @@
 Backend/env/*
 *.exe
 debug
+dbconfig.json
