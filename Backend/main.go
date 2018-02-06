@@ -25,6 +25,7 @@ func main() {
 
 	http.Handle("/upload", &handlers.Uploads{Data: db})
 	http.Handle("/matches", &handlers.Matches{Data: db})
+	http.Handle("/events", &handlers.Events{Data: db})
 	fmt.Println("Registering handlers.")
 
 	fmt.Println("Server listening to port: " + port)
