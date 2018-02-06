@@ -44,7 +44,8 @@ func (h *Events) getEventByID() ([]types.Event, error) {
 	query := "select * from public.getevents_sp();"
 	var events []types.Event
 
-	if err := h.Data.Select(&events, query); err != nil {
+	err := h.Data.Select(&events, query)
+	if err != nil {
 		return events, err
 	}
 

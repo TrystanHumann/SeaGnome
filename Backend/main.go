@@ -66,12 +66,12 @@ func parseSettings() (string, string) {
 			flags[option] = value
 		}
 	}
-	// Make sure all required flags are found
+	// Make sure all required flags a1re found
 	foundAll := true
 	for flag, value := range flags {
 		if len(value) == 0 {
 			foundAll = false
-			fmt.Println("flag: " + flag + " not found in command line arguments.\nRequres \"" + flag + ":[arg]\"")
+			fmt.Println("flag: " + flag + " not found in command line arguments.\nRequires \"" + flag + ":[arg]\"")
 		}
 	}
 
