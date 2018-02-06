@@ -18,7 +18,7 @@ type Matches struct {
 }
 
 // Matches : Handles queries involving which matches are in a given event.
-func (h *Matches) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (m *Matches) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		eventQuery := r.URL.Query().Get("event")
@@ -27,14 +27,14 @@ func (h *Matches) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "invalid event", http.StatusBadRequest)
 			return
 		}
-		matches := h.getMatchesByEvent(event)
+		matches := m.getMatchesByEvent(event)
 		competitions := make([]types.Competition, len(matches))
 
 		wg := new(sync.WaitGroup)
 
 		for i := range matches {
 			wg.Add(1)
-			go h.getCompetitorsByMatch(wg, &competitions[i], matches[i])
+			go m.getCompetitorsByMatch(wg, &competitions[i], matches[i])
 		}
 
 		wg.Wait()
@@ -47,11 +47,11 @@ func (h *Matches) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // getMatchesByEvent : Returns the valid events a user could make a prediction for an event.
-func (h *Matches) getMatchesByEvent(event int) []types.Match {
+func (m *Matches) getMatchesByEvent(event int) []types.Match {
 	query := "select * from public.getmatchesbyevent($1);"
 	var matches []types.Match
 
-	if err := h.Data.Select(&matches, query, event); err != nil {
+	if err := m.Data.Select(&matches, query, event); err != nil {
 		fmt.Println(err)
 	}
 
@@ -59,11 +59,11 @@ func (h *Matches) getMatchesByEvent(event int) []types.Match {
 }
 
 // getCompetitorsByMatch : Maps a competition for the given match
-func (h *Matches) getCompetitorsByMatch(wg *sync.WaitGroup, comp *types.Competition, match types.Match) {
+func (m *Matches) getCompetitorsByMatch(wg *sync.WaitGroup, comp *types.Competition, match types.Match) {
 	defer wg.Done()
 	competitorsQuery := "select * from public.getcompetitorsbymatch($1);"
 
-	if err := h.Data.Select(&comp.Competitors, competitorsQuery, match.ID); err != nil {
+	if err := m.Data.Select(&comp.Competitors, competitorsQuery, match.ID); err != nil {
 		fmt.Println(err)
 	}
 	comp.Match = match
