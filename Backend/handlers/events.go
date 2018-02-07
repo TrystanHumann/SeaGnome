@@ -40,16 +40,34 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
 		err = h.insertEvent(body.Name)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
 		// Better way of handling success/errors
 		w.WriteHeader(200)
 		w.Write([]byte("Successfully inserted Event"))
 
 	case http.MethodPut:
+		// Given an ID we want to update completed
+		id := r.URL.Query().Get("id")
+		complete := r.URL.Query().Get("completed")
+
+		if id != "" && complete != "" {
+			err := h.updateEvent(id, complete)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			w.WriteHeader(200)
+			w.Write([]byte("Successfully updated Event"))
+		} else {
+			http.Error(w, "requires id and completed query parameters to update", http.StatusBadRequest)
+		}
 	case http.MethodDelete:
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -71,7 +89,14 @@ func (h *Events) getEventByID() ([]types.Event, error) {
 
 // insertEvent : Creates an Event
 func (h *Events) insertEvent(name string) error {
-	query := "select * from public.createevent_sp($1)"
+	query := "select * from public.createevent_sp($1);"
 	_, err := h.Data.Exec(query, name)
+	return err
+}
+
+// updateEvent : Updates event  completed field
+func (h *Events) updateEvent(id string, comp string) error {
+	query := "select public.updateevent_sp($1::int2, $2::boolean);"
+	_, err := h.Data.Exec(query, id, comp)
 	return err
 }
