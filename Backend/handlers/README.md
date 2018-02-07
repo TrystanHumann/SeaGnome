@@ -20,7 +20,7 @@ __EventGetResponseBody__
 		"id": int,
 		"name": string,
 		"complete": boolean,
-		"created_date": "timestamp"
+		"created_date": timestamp
 	},
     {
     	...
