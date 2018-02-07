@@ -69,10 +69,28 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "requires id and completed query parameters to update", http.StatusBadRequest)
 		}
 	case http.MethodDelete:
+		// Given an ID we want to update completed
+		id := r.URL.Query().Get("id")
+
+		if id != "" {
+			err := h.deleteEvent(id)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+
+			//  TODO: How should I handle errors/successes
+			w.WriteHeader(200)
+			w.Write([]byte("Successfully deleted Event"))
+		} else {
+			http.Error(w, "requires id parameter to delete", http.StatusBadRequest)
+		}
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
 }
+
+// TODO: Handle when no rows are updated
 
 // getEventByID : Get Events by ID
 func (h *Events) getEventByID() ([]types.Event, error) {
@@ -98,5 +116,12 @@ func (h *Events) insertEvent(name string) error {
 func (h *Events) updateEvent(id string, comp string) error {
 	query := "select public.updateevent_sp($1::int2, $2::boolean);"
 	_, err := h.Data.Exec(query, id, comp)
+	return err
+}
+
+// deleteEvent : Deletes event based on id
+func (h *Events) deleteEvent(id string) error {
+	query := "select public.deleteevent_sp($1::int2);"
+	_, err := h.Data.Exec(query, id)
 	return err
 }
