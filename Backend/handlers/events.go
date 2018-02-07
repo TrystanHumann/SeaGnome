@@ -14,6 +14,8 @@ type Events struct {
 	Data *sqlx.DB
 }
 
+// TODO: Pass down request context to database
+
 // ServeHttp : Listens to event requests and creates a response
 func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -32,6 +34,21 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case http.MethodPost:
+		var body types.Event
+		err := json.NewDecoder(r.Body).Decode(&body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		err = h.insertEvent(body.Name)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		// Better way of handling success/errors
+		w.WriteHeader(200)
+		w.Write([]byte("Successfully inserted Event"))
+
 	case http.MethodPut:
 	case http.MethodDelete:
 	default:
@@ -50,4 +67,11 @@ func (h *Events) getEventByID() ([]types.Event, error) {
 	}
 
 	return events, nil
+}
+
+// insertEvent : Creates an Event
+func (h *Events) insertEvent(name string) error {
+	query := "select * from public.createevent_sp($1)"
+	_, err := h.Data.Exec(query, name)
+	return err
 }
