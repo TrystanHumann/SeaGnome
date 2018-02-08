@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	"encoding/json"
 
@@ -19,10 +20,12 @@ type Events struct {
 // ServeHttp : Listens to event requests and creates a response
 func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var friendlyResponse types.FriendlyResponse
+	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*15)
+	defer ctxCancel()
 	switch r.Method {
 	// GET
 	case http.MethodGet:
-		ev, err := h.getEvents(r.Context())
+		ev, err := h.getEvents(ctx)
 
 		if err != nil {
 			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
@@ -57,7 +60,7 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = h.insertEvent(r.Context(), body.Name)
+		_, err = h.insertEvent(ctx, body.Name)
 		if err != nil {
 			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
 			json.NewEncoder(w).Encode(friendlyResponse)
@@ -81,7 +84,7 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		complete := r.URL.Query().Get("completed")
 
 		if id != "" && complete != "" {
-			_, err := h.updateEvent(r.Context(), id, complete)
+			_, err := h.updateEvent(ctx, id, complete)
 			if err != nil {
 				friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
 				json.NewEncoder(w).Encode(friendlyResponse)
@@ -108,7 +111,7 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
 		if id != "" {
-			_, err := h.deleteEvent(r.Context(), id)
+			_, err := h.deleteEvent(ctx, id)
 			if err != nil {
 				friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
 				json.NewEncoder(w).Encode(friendlyResponse)
