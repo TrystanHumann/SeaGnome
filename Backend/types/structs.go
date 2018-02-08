@@ -46,6 +46,7 @@ type Competition struct {
 
 // Streamer : A twitch user displayed on the front page
 type Streamer struct {
-	Tag    string
-	Active bool
+	ID     int    `json:"id" db:"id"`
+	Tag    string `json:"tag" db:"tag"`
+	Active bool   `json:"active" db:"active"`
 }
