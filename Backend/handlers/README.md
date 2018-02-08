@@ -41,6 +41,6 @@ __Result: EventGetResponse__
 | Endpoint      | Method           | Query Parameters  | Headers | Body | Response | Description | Auth |
 | ------------- |:-------------:| :-----:| :-----:| :----:| :-----:| :----:| :---:|
 | `/events`      | `GET` | N/A | N/A | N/A | FriendlyResponse(`EventGetResponse`) | Returns all events `DESC` by created_date | N/A |
-| `/events`      | `POST` | N/A | N/A | `EventPostBody` |  `200` success otherwise error | Creates a new event | N/A |
-| `/events` | `PUT`     |    __id (int)__  && __completed (boolean)__| N/A | N/A | `200` success otherwise error  | Updates an event complete status by the event ID | N/A |
-| `/events`| `DELETE` | __id (int)__ | N/A | N/A | `200` success otherwise error | Deletes an event by its id (this should cascade to all foreign keys associated with this ID) | N/A |
+| `/events`      | `POST` | N/A | N/A | `EventPostBody` |  FriendlyResponse(`Message`)  | Creates a new event | N/A |
+| `/events` | `PUT`     |    __id (int)__  && __completed (boolean)__| N/A | N/A | FriendlyResponse(`Message`) | Updates an event complete status by the event ID | N/A |
+| `/events`| `DELETE` | __id (int)__ | N/A | N/A | FriendlyResponse(`Message`)  | Deletes an event by its id (this should cascade to all foreign keys associated with this ID) | N/A |
