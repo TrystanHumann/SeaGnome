@@ -18,21 +18,32 @@ type Events struct {
 
 // ServeHttp : Listens to event requests and creates a response
 func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var friendlyResponse types.FriendlyResponse
 	switch r.Method {
+	// GET
 	case http.MethodGet:
-		events, err := h.getEventByID()
+		ev, err := h.getEvents()
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
+			innerErr := json.NewEncoder(w).Encode(friendlyResponse)
+			if innerErr != nil {
+				// fall back just in case encoder isn't able to write
+				http.Error(w, innerErr.Error(), http.StatusBadRequest)
+			}
 			return
 		}
-		err = json.NewEncoder(w).Encode(events)
 
+		// mapping to friendly response
+		friendlyResponse = types.NewFriendlyResponse(http.StatusOK, ev, err, "")
+		err = json.NewEncoder(w).Encode(friendlyResponse)
+
+		// If we are unable to encode
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
 		}
 
+	// POST
 	case http.MethodPost:
 		var body types.Event
 		err := json.NewDecoder(r.Body).Decode(&body)
@@ -41,7 +52,7 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = h.insertEvent(body.Name)
+		_, err = h.insertEvent(body.Name)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -51,13 +62,14 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		w.Write([]byte("Successfully inserted Event"))
 
+	// PUT
 	case http.MethodPut:
 		// Given an ID we want to update completed
 		id := r.URL.Query().Get("id")
 		complete := r.URL.Query().Get("completed")
 
 		if id != "" && complete != "" {
-			err := h.updateEvent(id, complete)
+			_, err := h.updateEvent(id, complete)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
@@ -68,12 +80,14 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else {
 			http.Error(w, "requires id and completed query parameters to update", http.StatusBadRequest)
 		}
+
+	// DELETE
 	case http.MethodDelete:
 		// Given an ID we want to update completed
 		id := r.URL.Query().Get("id")
 
 		if id != "" {
-			err := h.deleteEvent(id)
+			_, err := h.deleteEvent(id)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
@@ -90,10 +104,8 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// TODO: Handle when no rows are updated
-
-// getEventByID : Get Events by ID
-func (h *Events) getEventByID() ([]types.Event, error) {
+// getEvents : Get Events by ID
+func (h *Events) getEvents() ([]types.Event, error) {
 	query := "select * from public.getevents_sp();"
 	var events []types.Event
 
@@ -106,22 +118,46 @@ func (h *Events) getEventByID() ([]types.Event, error) {
 }
 
 // insertEvent : Creates an Event
-func (h *Events) insertEvent(name string) error {
+func (h *Events) insertEvent(name string) (int64, error) {
 	query := "select * from public.createevent_sp($1);"
-	_, err := h.Data.Exec(query, name)
-	return err
+	res, err := h.Data.Exec(query, name)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rowsAffected, err
 }
 
 // updateEvent : Updates event  completed field
-func (h *Events) updateEvent(id string, comp string) error {
+func (h *Events) updateEvent(id string, comp string) (int64, error) {
 	query := "select public.updateevent_sp($1::int2, $2::boolean);"
-	_, err := h.Data.Exec(query, id, comp)
-	return err
+	res, err := h.Data.Exec(query, id, comp)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rowsAffected, err
 }
 
 // deleteEvent : Deletes event based on id
-func (h *Events) deleteEvent(id string) error {
+func (h *Events) deleteEvent(id string) (int64, error) {
 	query := "select public.deleteevent_sp($1::int2);"
-	_, err := h.Data.Exec(query, id)
-	return err
+	res, err := h.Data.Exec(query, id)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rowsAffected, err
 }
