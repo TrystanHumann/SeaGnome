@@ -1,9 +1,5 @@
 package types
 
-import (
-	"time"
-)
-
 // User : Represents a user from the uploaded csv
 type User struct {
 	ID             int
@@ -46,12 +42,4 @@ type Competitor struct {
 type Competition struct {
 	Match
 	Competitors []Competitor
-}
-
-// Event : is a struct that contains information about an event
-type Event struct {
-	ID          int       `json:"id"  db:"id"`
-	Name        string    `json:"name" db:"name"`
-	Complete    bool      `json:"complete" db:"complete"`
-	CreatedDate time.Time `json:"created_date" db:"created_date"`
 }
