@@ -17,7 +17,7 @@ type Uploads struct {
 }
 
 // ServeHTTP : Listens for a request and creates a response
-func (h *Uploads) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (u *Uploads) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	excelFileName := "../test1.csv"
 
 	xlFile, err := xlsx.OpenFile(excelFileName)
