@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -15,15 +16,13 @@ type Events struct {
 	Data *sqlx.DB
 }
 
-// TODO: Pass down request context to database
-
 // ServeHttp : Listens to event requests and creates a response
 func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var friendlyResponse types.FriendlyResponse
 	switch r.Method {
 	// GET
 	case http.MethodGet:
-		ev, err := h.getEvents()
+		ev, err := h.getEvents(r.Context())
 
 		if err != nil {
 			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
@@ -58,7 +57,7 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = h.insertEvent(body.Name)
+		_, err = h.insertEvent(r.Context(), body.Name)
 		if err != nil {
 			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
 			json.NewEncoder(w).Encode(friendlyResponse)
@@ -82,7 +81,7 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		complete := r.URL.Query().Get("completed")
 
 		if id != "" && complete != "" {
-			_, err := h.updateEvent(id, complete)
+			_, err := h.updateEvent(r.Context(), id, complete)
 			if err != nil {
 				friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
 				json.NewEncoder(w).Encode(friendlyResponse)
@@ -109,7 +108,7 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 
 		if id != "" {
-			_, err := h.deleteEvent(id)
+			_, err := h.deleteEvent(r.Context(), id)
 			if err != nil {
 				friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
 				json.NewEncoder(w).Encode(friendlyResponse)
@@ -136,11 +135,11 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // getEvents : Get Events by ID
-func (h *Events) getEvents() ([]types.Event, error) {
+func (h *Events) getEvents(ctx context.Context) ([]types.Event, error) {
 	query := "select * from public.getevents_sp();"
 	var events []types.Event
 
-	err := h.Data.Select(&events, query)
+	err := h.Data.SelectContext(ctx, &events, query)
 	if err != nil {
 		return events, err
 	}
@@ -149,9 +148,9 @@ func (h *Events) getEvents() ([]types.Event, error) {
 }
 
 // insertEvent : Creates an Event
-func (h *Events) insertEvent(name string) (int64, error) {
+func (h *Events) insertEvent(ctx context.Context, name string) (int64, error) {
 	query := "select * from public.createevent_sp($1);"
-	res, err := h.Data.Exec(query, name)
+	res, err := h.Data.ExecContext(ctx, query, name)
 	if err != nil {
 		return 0, err
 	}
@@ -164,9 +163,9 @@ func (h *Events) insertEvent(name string) (int64, error) {
 }
 
 // updateEvent : Updates event  completed field
-func (h *Events) updateEvent(id string, comp string) (int64, error) {
+func (h *Events) updateEvent(ctx context.Context, id string, comp string) (int64, error) {
 	query := "select public.updateevent_sp($1::int2, $2::boolean);"
-	res, err := h.Data.Exec(query, id, comp)
+	res, err := h.Data.ExecContext(ctx, query, id, comp)
 	if err != nil {
 		return 0, err
 	}
@@ -179,9 +178,9 @@ func (h *Events) updateEvent(id string, comp string) (int64, error) {
 }
 
 // deleteEvent : Deletes event based on id
-func (h *Events) deleteEvent(id string) (int64, error) {
+func (h *Events) deleteEvent(ctx context.Context, id string) (int64, error) {
 	query := "select public.deleteevent_sp($1::int2);"
-	res, err := h.Data.Exec(query, id)
+	res, err := h.Data.ExecContext(ctx, query, id)
 	if err != nil {
 		return 0, err
 	}
