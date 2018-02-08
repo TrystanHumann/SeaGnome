@@ -30,7 +30,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-self: flex-start;
-  background: url("../../assets/test.jpg");
+  background: url("../../assets/background.png");
   background-repeat: no-repeat;
   background-size: cover;
   z-index: -2;
