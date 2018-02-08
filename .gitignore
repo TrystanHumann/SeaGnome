@@ -3,3 +3,4 @@ Backend/env/*
 *.exe
 debug
 dbconfig.json
+appsettings.json

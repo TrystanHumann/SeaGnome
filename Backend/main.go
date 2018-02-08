@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -19,13 +20,14 @@ import (
 
 func main() {
 
-	port, connectionString := parseSettings()
+	port, connectionString, twitchID := parseSettings()
 
 	db := sqlx.MustConnect("postgres", connectionString)
 
 	http.Handle("/upload", &handlers.Uploads{Data: db})
 	http.Handle("/matches", &handlers.Matches{Data: db})
 	http.Handle("/events", &handlers.Events{Data: db})
+	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
 	fmt.Println("Registering handlers.")
 
 	fmt.Println("Server listening to port: " + port)
@@ -35,7 +37,7 @@ func main() {
 	}
 }
 
-func parseSettings() (string, string) {
+func parseSettings() (string, string, string) {
 	flags := map[string]string{
 		"env":     "",
 		"port":    "",
@@ -79,7 +81,9 @@ func parseSettings() (string, string) {
 		os.Exit(1)
 	}
 
-	return flags["port"], generateConnectionString(flags["secrets"], flags["env"])
+	connString := generateConnectionString(flags["secrets"], flags["env"])
+	twitchID := generateAppSettings(flags["secrets"])
+	return flags["port"], connString, twitchID
 }
 
 // generateConnectionString : structures the connection string for the postgres db
@@ -107,15 +111,15 @@ func generateConnectionString(secretsPath, env string) string {
 		} `json:"Production"`
 	}
 
-	var db dbSettings
+	db := new(dbSettings)
 
-	raw, err := ioutil.ReadFile(secretsPath)
+	raw, err := ioutil.ReadFile(path.Join(secretsPath, "dbconfig.json"))
 	if err != nil {
 		fmt.Println("Failed to load db settings: " + err.Error())
 		os.Exit(1)
 	}
 
-	if err := json.Unmarshal(raw, &db); err != nil {
+	if err := json.Unmarshal(raw, db); err != nil {
 		fmt.Println("Failed to unmarhsal: " + err.Error())
 	}
 
@@ -139,4 +143,27 @@ func generateConnectionString(secretsPath, env string) string {
 	}
 
 	return connectionString
+}
+
+func generateAppSettings(secretsPath string) string {
+	type appSettings struct {
+		Twitch struct {
+			TwitchID     string `json:"TwitchID"`
+			TwitchSecret string `json:"TwitchSecret"`
+		} `json:"Twitch"`
+	}
+
+	as := new(appSettings)
+
+	raw, err := ioutil.ReadFile(path.Join(secretsPath, "appsettings.json"))
+	if err != nil {
+		fmt.Println("Failed to load db settings: " + err.Error())
+		os.Exit(1)
+	}
+
+	if err := json.Unmarshal(raw, as); err != nil {
+		fmt.Println("Failed to unmarhsal: " + err.Error())
+	}
+
+	return as.Twitch.TwitchID
 }

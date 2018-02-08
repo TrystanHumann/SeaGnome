@@ -43,3 +43,10 @@ type Competition struct {
 	Match
 	Competitors []Competitor
 }
+
+// Streamer : A twitch user displayed on the front page
+type Streamer struct {
+	ID     int    `json:"id" db:"id"`
+	Tag    string `json:"tag" db:"tag"`
+	Active bool   `json:"active" db:"active"`
+}
