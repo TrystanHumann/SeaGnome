@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"time"
 
@@ -19,7 +18,6 @@ type Events struct {
 
 // ServeHttp : Listens to event requests and creates a response
 func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var friendlyResponse types.FriendlyResponse
 	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*15)
 	defer ctxCancel()
 	switch r.Method {
@@ -28,54 +26,43 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ev, err := h.getEvents(ctx)
 
 		if err != nil {
-			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			// TODO: Log error in new encoder functons (?)
-			json.NewEncoder(w).Encode(friendlyResponse)
+			http.Error(w, "unable to fetch errors", http.StatusBadRequest)
 			return
 		}
 
-		// mapping to friendly response and having message for when result is nil
-		mess := ""
-		if ev == nil {
-			mess = "no results returned back"
+		err = json.NewEncoder(w).Encode(ev)
+
+		if err != nil {
+			http.Error(w, "unable to to json encode events", http.StatusBadRequest)
+			return
 		}
-		friendlyResponse = types.NewFriendlyResponse(http.StatusOK, ev, err, mess)
-		json.NewEncoder(w).Encode(friendlyResponse)
 
 	// POST
 	case http.MethodPost:
 		var body types.Event
 		err := json.NewDecoder(r.Body).Decode(&body)
 		if err != nil {
-			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			json.NewEncoder(w).Encode(friendlyResponse)
+			http.Error(w, "error decoding body for events", http.StatusBadRequest)
 			return
 		}
 
 		// Nothing was in the body
 		if body.Name == "" {
-			err = errors.New("invalid name in the body so was unable to insert event")
-			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			json.NewEncoder(w).Encode(friendlyResponse)
+			http.Error(w, "invalid name in the body so was unable to insert event", http.StatusBadRequest)
 			return
 		}
 
 		_, err = h.insertEvent(ctx, body.Name)
 		if err != nil {
-			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			json.NewEncoder(w).Encode(friendlyResponse)
+			http.Error(w, "error inserting event", http.StatusBadRequest)
 			return
 		}
-		// Rows were not affected
+
+		// // Rows were not affected
 		// if rows <= 0 {
-		// 	err = errors.New("no rows were affected")
-		// 	friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-		// 	json.NewEncoder(w).Encode(friendlyResponse)
+		// 	http.Error(w, "no rows affected", http.StatusBadRequest)
 		// 	return
 		// }
-
-		friendlyResponse = types.NewFriendlyResponse(http.StatusOK, nil, nil, "Successfully inserted event")
-		json.NewEncoder(w).Encode(friendlyResponse)
 
 	// PUT
 	case http.MethodPut:
@@ -86,23 +73,17 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if id != "" && complete != "" {
 			_, err := h.updateEvent(ctx, id, complete)
 			if err != nil {
-				friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-				json.NewEncoder(w).Encode(friendlyResponse)
+				http.Error(w, "error updating event", http.StatusBadRequest)
+				return
 			}
 
 			// if rows <= 0 {
-			// 	err = errors.New("no rows were affected")
-			// 	friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			// 	json.NewEncoder(w).Encode(friendlyResponse)
+			// 	http.Error(w, "error updating event", http.StatusBadRequest)
 			// 	return
 			// }
-			friendlyResponse = types.NewFriendlyResponse(http.StatusOK, nil, nil, "Successfully updated event")
-			json.NewEncoder(w).Encode(friendlyResponse)
-
 		} else {
-			err := errors.New("requires id and completed query parameters to update event")
-			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			json.NewEncoder(w).Encode(friendlyResponse)
+			http.Error(w, "requires id and completed query parameters to update event", http.StatusBadRequest)
+			return
 		}
 
 	// DELETE
@@ -113,8 +94,8 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if id != "" {
 			_, err := h.deleteEvent(ctx, id)
 			if err != nil {
-				friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-				json.NewEncoder(w).Encode(friendlyResponse)
+				http.Error(w, "error deleting event", http.StatusBadRequest)
+				return
 			}
 			// Rows were not affected
 			// if rows <= 0 {
@@ -123,17 +104,13 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			// 	json.NewEncoder(w).Encode(friendlyResponse)
 			// 	return
 			// }
-			friendlyResponse = types.NewFriendlyResponse(http.StatusOK, nil, nil, "Successfully deleted event")
-			json.NewEncoder(w).Encode(friendlyResponse)
 		} else {
-			err := errors.New("requires id to delete event")
-			friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			json.NewEncoder(w).Encode(friendlyResponse)
+			http.Error(w, "error deleting event", http.StatusBadRequest)
+			return
 		}
 	default:
-		err := errors.New("invalid rest method")
-		friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-		json.NewEncoder(w).Encode(friendlyResponse)
+		http.Error(w, "invalid rest method", http.StatusBadRequest)
+		return
 	}
 }
 
