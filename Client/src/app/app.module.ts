@@ -7,13 +7,15 @@ import { AppComponent } from './app.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { RouteRoutingModule } from './route/route-routing.module';
 import { LandingComponent } from './landing/landing.component';
+import { AdminComponent } from './admin/admin.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     UserProfileComponent,
-    LandingComponent
+    LandingComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,

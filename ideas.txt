@@ -1,2 +1,3 @@
 On hover make sound play for the twitch stream you want (muted on load)
 maybe make the title more readable
+add a preview on the admin portal (beside the manage frontpage section)
