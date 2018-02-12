@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
+	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/tealeg/xlsx"
-	"github.com/trystanhumann/SeaGnome/Backend/types"
 )
 
 // Uploads : Handles requests involved with uploads
@@ -18,54 +18,51 @@ type Uploads struct {
 
 // ServeHTTP : Listens for a request and creates a response
 func (u *Uploads) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	excelFileName := "../test1.csv"
+	switch r.Method {
+	case http.MethodPost:
+		var buffer bytes.Buffer
 
-	xlFile, err := xlsx.OpenFile(excelFileName)
-	if err != nil {
-		fmt.Println(err)
-	}
+		file, header, err := r.FormFile("uploadFile")
 
-	var users []types.User
-	for i, sheet := range xlFile.Sheets {
-		if i < 1 {
-			for j := range sheet.Rows {
-				var user types.User
-				for k := range sheet.Cols {
-					column := sheet.Cell(0, k).String()
-					value := sheet.Cell(j, k).String()
-
-					if column == "Timestamp" {
-						user.Timestamp = value
-					}
-					if strings.Contains(column, "Twitch Username") {
-						user.Twitch = value
-					}
-					if strings.Contains(column, "Twitter") {
-						user.Twitter = value
-					}
-					if strings.Contains(column, "TIE BREAKER") {
-						user.TieBreakerTime = value
-					}
-					if strings.Contains(column, "Predictions") {
-						prediction := types.Prediction{
-							Column:     column,
-							Prediction: value,
-						}
-						user.Predictions = append(user.Predictions, prediction)
-					}
-					if strings.Contains(column, "Bonus Question") {
-						user.BonusQuestion = value
-					}
-				}
-				//users = append(users, user)
-				// go data.
-			}
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
+
+		// ID of the event that we will be updating data for
+		gameID := r.FormValue("gameID")
+
+		id, err := strconv.Atoi(gameID)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		fmt.Printf("%i\n", id)
+
+		// Getting the name of the file
+		name := strings.Split(header.Filename, ".")
+
+		// Check length of file name
+		fmt.Println(name[0])
+
+		// transfer contents of the file to our buffer
+		io.Copy(&buffer, file)
+
+		// Determine whether it is prediction or results
+		// Getting the string version of our buffer
+		contents := strings.Split(strings.Replace(buffer.String(), ";", "", -1), "\n")
+
+		for _, v := range contents {
+			fmt.Println(v)
+		}
+
+		// Cleaning up buffer memory
+		buffer.Reset()
+		w.Write([]byte("Yes"))
+
+	default:
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
-	// fmt.Println(users[1])
-	output, err := json.Marshal(users[1])
-	if err != nil {
-		fmt.Println(err)
-	}
-	w.Write(output)
 }
