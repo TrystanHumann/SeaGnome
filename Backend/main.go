@@ -25,7 +25,8 @@ func main() {
 	db := sqlx.MustConnect("postgres", connectionString)
 
 	http.Handle("/upload", &handlers.Uploads{Data: db})
-	http.Handle("/match", &handlers.Matches{Data: db})
+	http.Handle("/matches", &handlers.Matches{Data: db})
+	http.Handle("/events", &handlers.Events{Data: db})
 	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
 	fmt.Println("Registering handlers.")
 
@@ -67,12 +68,12 @@ func parseSettings() (string, string, string) {
 			flags[option] = value
 		}
 	}
-	// Make sure all required flags are found
+	// Make sure all required flags a1re found
 	foundAll := true
 	for flag, value := range flags {
 		if len(value) == 0 {
 			foundAll = false
-			fmt.Println("flag: " + flag + " not found in command line arguments.\nRequres \"" + flag + ":[arg]\"")
+			fmt.Println("flag: " + flag + " not found in command line arguments.\nRequires \"" + flag + ":[arg]\"")
 		}
 	}
 
