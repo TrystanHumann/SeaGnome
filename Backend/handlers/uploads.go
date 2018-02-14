@@ -22,7 +22,7 @@ func (u *Uploads) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		var buffer bytes.Buffer
 
-		file, header, err := r.FormFile("uploadFile")
+		file, _, err := r.FormFile("uploadFile")
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -41,12 +41,6 @@ func (u *Uploads) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		fmt.Printf("%i\n", id)
 
-		// Getting the name of the file
-		name := strings.Split(header.Filename, ".")
-
-		// Check length of file name
-		fmt.Println(name[0])
-
 		// transfer contents of the file to our buffer
 		io.Copy(&buffer, file)
 
@@ -54,8 +48,17 @@ func (u *Uploads) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// Getting the string version of our buffer
 		contents := strings.Split(strings.Replace(buffer.String(), ";", "", -1), "\n")
 
-		for _, v := range contents {
-			fmt.Println(v)
+		for l, v := range contents {
+			// split by commas and begin extracting the values
+			commaContents := strings.Split(v, ",")
+			if l == 0 {
+				fmt.Println(len(commaContents))
+				fmt.Println(commaContents)
+			}
+			// loop through comma contents
+			// for _, cc := range commaContents {
+			// 	// fmt.Println(cc)
+			// }
 		}
 
 		// Cleaning up buffer memory
