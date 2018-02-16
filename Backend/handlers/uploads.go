@@ -22,10 +22,21 @@ func (u *Uploads) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		var buffer bytes.Buffer
 
-		file, _, err := r.FormFile("uploadFile")
+		file, header, err := r.FormFile("uploadFile")
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		fn := strings.Split(header.Filename, ".")
+		if len(fn) <= 0 {
+			http.Error(w, "Invalid file type", http.StatusBadRequest)
+			return
+		}
+
+		if fn[len(fn)-1] != "csv" {
+			http.Error(w, "Invalid file type.  File must be a csv file", http.StatusBadRequest)
 			return
 		}
 
@@ -48,12 +59,16 @@ func (u *Uploads) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// Getting the string version of our buffer
 		contents := strings.Split(strings.Replace(buffer.String(), ";", "", -1), "\n")
 
-		for l, v := range contents {
+		if len(contents) <= 0 {
+			http.Error(w, "No contents found in CSV", http.StatusBadRequest)
+			return
+		}
+		columnNames := contents[0]
+		for l := range contents {
 			// split by commas and begin extracting the values
-			commaContents := strings.Split(v, ",")
+			// commaContents := strings.Split(contents[l], ",")
 			if l == 0 {
-				fmt.Println(len(commaContents))
-				fmt.Println(commaContents)
+				fmt.Println(columnNames)
 			}
 			// loop through comma contents
 			// for _, cc := range commaContents {
