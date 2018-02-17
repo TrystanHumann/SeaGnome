@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION public.createadmin(id bytea, username text, password text)
- RETURNS integer
+ RETURNS void
  LANGUAGE plpgsql
 AS $function$
 
@@ -8,7 +8,7 @@ AS $function$
 		pw text;
 
 	begin	
-		salt := gen_salt('crypt-bf/5');
+		salt := gen_salt('bf');
 		pw := crypt($3, salt);
 
 		insert into public.auth(id, username, password, salt)

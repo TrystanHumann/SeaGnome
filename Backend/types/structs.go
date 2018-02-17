@@ -59,9 +59,11 @@ type Streamer struct {
 
 // ID : A user's id throught the application.
 type ID struct {
-	ID       xid.ID
-	Cookie   xid.ID
-	Username string
+	ID       xid.ID    `json:"id"`
+	Token    xid.ID    `json:"token"`
+	Username string    `json:"username"`
+	Password string    `json:"password"`
+	Expires  time.Time `json:"expires"`
 }
 
 // TwitchStreamer : Twitch's view of a streamer's account.
