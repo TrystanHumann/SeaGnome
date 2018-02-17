@@ -87,6 +87,7 @@ func (s *Streamer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 	default:
+		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 	}
 }
 
