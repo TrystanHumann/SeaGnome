@@ -59,12 +59,6 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// // Rows were not affected
-		// if rows <= 0 {
-		// 	http.Error(w, "no rows affected", http.StatusBadRequest)
-		// 	return
-		// }
-
 	// PUT
 	case http.MethodPut:
 		// Given an ID we want to update completed
@@ -77,11 +71,6 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "error updating event", http.StatusBadRequest)
 				return
 			}
-
-			// if rows <= 0 {
-			// 	http.Error(w, "error updating event", http.StatusBadRequest)
-			// 	return
-			// }
 		} else {
 			http.Error(w, "requires id and completed query parameters to update event", http.StatusBadRequest)
 			return
@@ -98,13 +87,6 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "error deleting event", http.StatusBadRequest)
 				return
 			}
-			// Rows were not affected
-			// if rows <= 0 {
-			// 	err = errors.New("no rows were affected")
-			// 	friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			// 	json.NewEncoder(w).Encode(friendlyResponse)
-			// 	return
-			// }
 		} else {
 			http.Error(w, "error deleting event", http.StatusBadRequest)
 			return
