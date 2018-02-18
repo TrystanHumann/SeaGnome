@@ -24,7 +24,8 @@ func main() {
 
 	db := sqlx.MustConnect("postgres", connectionString)
 
-	http.Handle("/upload", &handlers.Uploads{Data: db})
+	http.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
+	http.Handle("/results/upload", &handlers.UploadResults{Data: db})
 	http.Handle("/matches", &handlers.Matches{Data: db})
 	http.Handle("/events", &handlers.Events{Data: db})
 	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
