@@ -19,6 +19,7 @@ type Matches struct {
 
 // Matches : Handles queries involving which matches are in a given event.
 func (m *Matches) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	switch r.Method {
 	case http.MethodGet:
 		eventQuery := r.URL.Query().Get("event")

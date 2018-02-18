@@ -23,7 +23,7 @@ type Streamer struct {
 func (s *Streamer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*15)
 	defer ctxCancel()
-
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	switch r.Method {
 	case http.MethodGet:
 
