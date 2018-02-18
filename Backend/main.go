@@ -24,6 +24,7 @@ func main() {
 
 	db := sqlx.MustConnect("postgres", connectionString)
 
+	http.Handle("/login", &handlers.Login{Data: db})
 	http.Handle("/upload", &handlers.Uploads{Data: db})
 	http.Handle("/matches", &handlers.Matches{Data: db})
 	http.Handle("/events", &handlers.Events{Data: db})
