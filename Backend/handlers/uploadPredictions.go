@@ -63,6 +63,7 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "No contents found in CSV", http.StatusBadRequest)
 			return
 		}
+
 		columnNames := contents[0]
 		for l := range contents {
 			// split by commas and begin extracting the values
