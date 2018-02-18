@@ -26,9 +26,9 @@
         </div>
 
       </div>
-      <iframe *ngFor="let streamer of trustedUrl" class="hideOnSmallScreen" style="display:inline;padding-right:10px;padding-top:5px;padding-bottom:5px;"
+      <!-- <iframe *ngFor="let streamer of trustedUrl" class="hideOnSmallScreen" style="display:inline;padding-right:10px;padding-top:5px;padding-bottom:5px;"
         [src]="streamer" frameborder="0" scrolling="no" allowfullscreen="true">
-      </iframe>
+      </iframe> -->
     </div>
 
     <div class="flexBoxCustomContainerColumn">
@@ -50,16 +50,19 @@
         <div class="lg-col-2" style="padding-right:25px;text-align:center;">
           <h3>Create New Event</h3>
           <div>
-            <input style="display:none;" type="file" name="createEvent" id="createEvent" accept=".csv" (change)="uploadExcel($event)"
-            />
-            <label class="btn btn-primary" style="margin-top:5px;" (click)="open(content)">Create Event</label>
+            <input type="text" [(ngModel)]="eventRequest.Name">
+            <br>
+            <button class="btn btn-primary" style="margin-top:5px;" (click)="createEvent()">Create Event</button>
+            <!-- <input style="display:none;" type="file" name="createEvent" id="createEvent" accept=".csv" (change)="uploadExcel($event)"
+            /> -->
+            <!-- <label class="btn btn-primary" style="margin-top:5px;" (click)="open(content)">Create Event</label> -->
           </div>
         </div>
         <div class="lg-col-2" style="padding-right:25px;text-align:center;">
           <h3>Update Predictions</h3>
           <div>
-            <select [(ngModel)]="fakeListOfData" style="width:75%">
-              <option *ngFor="let fake of fakeListOfData" [ngValue]="fake">{{fake}}</option>
+            <select [(ngModel)]="manageEventsObject.updatePredictions" style="width:75%">
+              <option *ngFor="let event of eventList" [ngValue]="event.id">{{event.name}}</option>
             </select>
             <br>
             <input style="display:none;" type="file" name="uploadExcel" id="uploadExcel" accept=".csv" (change)="uploadExcel($event)"
@@ -70,8 +73,8 @@
         <div class="lg-col-2" style="padding-right:25px;text-align:center;">
           <h3>Update Event Results</h3>
           <div>
-            <select [(ngModel)]="fakeListOfData" style="width:75%">
-              <option *ngFor="let fake of fakeListOfData" [ngValue]="fake">{{fake}}</option>
+            <select [(ngModel)]="manageEventsObject.updateEventResults" style="width:75%">
+              <option *ngFor="let event of eventList" [ngValue]="event.id">{{event.name}}</option>
             </select>
             <br>
             <input style="display:none;" type="file" name="uploadEvent" id="uploadEvent" accept=".csv" (change)="uploadExcel($event)"
@@ -82,21 +85,21 @@
         <div class="lg-col-2" style="padding-right:25px;text-align:center;">
           <h3>Complete Event</h3>
           <div>
-            <select [(ngModel)]="fakeListOfData" style="width:75%">
-              <option *ngFor="let fake of fakeListOfData" [ngValue]="fake">{{fake}}</option>
+            <select [(ngModel)]="manageEventsObject.completeEvent" style="width:75%">
+              <option *ngFor="let event of eventList" [ngValue]="event.id">{{event.name}}</option>
             </select>
             <br>
-            <button class="btn btn-primary" type="submit" style="margin-top:5px;">Complete Event</button>
+            <button class="btn btn-primary" type="submit" style="margin-top:5px;" (click)="completeEvent()">Complete Event</button>
           </div>
         </div>
         <div class="lg-col-2" style="padding-right:25px;text-align:center;">
           <h3>Delete Event</h3>
           <div>
-            <select [(ngModel)]="fakeListOfData" style="width:75%">
-              <option *ngFor="let fake of fakeListOfData" [ngValue]="fake">{{fake}}</option>
+            <select [(ngModel)]="manageEventsObject.deleteEvent" style="width:75%">
+              <option *ngFor="let event of eventList" [ngValue]="event.id">{{event.name}}</option>
             </select>
             <br>
-            <button class="btn btn-primary" type="submit" style="margin-top:5px;">Select Event</button>
+            <button class="btn btn-primary" type="submit" style="margin-top:5px;" (click)="deleteEvent()">Select Event</button>
           </div>
         </div>
       </div>

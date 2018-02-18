@@ -4,6 +4,8 @@ import { Streamer } from '../models/Streamer.model';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpParams } from '@angular/common/http';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { EventRequest } from '../models/EventRequest.model';
+import { EventResponse } from '../models/EventResponse.model';
 
 @Component({
   selector: 'app-admin',
@@ -11,19 +13,22 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./admin.component.css']
 })
 
+
+
 export class AdminComponent implements OnInit {
   public streamers: Streamer[];
   public trustedUrl: SafeUrl[] = [];
   public EventName: string;
   public eventName: string;
-  public fakeListOfData = new Array<String>('MOM1', 'MOM2', 'MOM3');
+  public eventList = new Array<EventResponse>();
   public startInsertRows = { id: 0, game: 'Insert Game', competitor: ['Iateyourpie', 'Spikevegeta'] };
   public closeResult: string;
   public eventCreateRows: any[] = [];
   public showEditable: boolean;
   public editRowId: any;
   public editColumnId: any;
-
+  public eventRequest: EventRequest = { Name: '' };
+  public manageEventsObject = { updatePredictions: null, updateEventResults: null, completeEvent: null, deleteEvent: null };
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal) { }
@@ -52,6 +57,7 @@ export class AdminComponent implements OnInit {
   ngOnInit() {
     this.setStreamers();
     this.eventCreateRows.push(this.startInsertRows);
+    this.getEvents();
   }
 
   public setStreamers() {
@@ -67,9 +73,42 @@ export class AdminComponent implements OnInit {
       }
     );
   }
+
   public createEvent() {
-    console.log(this.eventName);
-    console.log(this.eventCreateRows);
+    this.adminservice.CreateEvent(this.eventRequest).subscribe(
+      (res) => {
+        this.getEvents();
+      }
+    );
+  }
+
+  public getEvents() {
+    this.adminservice.getEvents().subscribe(
+      (res) => {
+        if (!res) {
+          return;
+        }
+        this.eventList = res.filter((event) => {
+          return event.complete === false;
+        });
+      }
+    );
+  }
+
+  public completeEvent() {
+    this.adminservice.CompeleteEvent(this.manageEventsObject.completeEvent, true).subscribe(
+      (res) => {
+        this.eventList = this.eventList.filter((elm) => elm.id !== this.manageEventsObject.completeEvent);
+      }
+    );
+  }
+
+  public deleteEvent() {
+    this.adminservice.DeleteEvent(this.manageEventsObject.deleteEvent).subscribe(
+      (res) => {
+        this.eventList = this.eventList.filter((elm) => elm.id !== this.manageEventsObject.deleteEvent);
+      }
+    );
   }
 
   public uploadExcel(event) {
@@ -118,7 +157,5 @@ export class AdminComponent implements OnInit {
 
   public toggleColumn(y) {
     this.editColumnId = y;
-    // console.log(this.editRowId, this.editColumnId);
-    console.log(this.eventCreateRows);
   }
 }
