@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -18,6 +20,8 @@ type UploadPredictions struct {
 
 // ServeHTTP : Listens for a request and creates a response
 func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*1800000)
+	defer ctxCancel()
 	switch r.Method {
 	case http.MethodPost:
 		var buffer bytes.Buffer
@@ -41,9 +45,9 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// ID of the event that we will be updating data for
-		gameID := r.FormValue("gameID")
+		eventID := r.FormValue("eventID")
 
-		id, err := strconv.Atoi(gameID)
+		id, err := strconv.Atoi(eventID)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -57,25 +61,120 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		// Determine whether it is prediction or results
 		// Getting the string version of our buffer
-		contents := strings.Split(strings.Replace(buffer.String(), ";", "", -1), "\n")
+		contents := strings.Split(buffer.String(), "\n")
 
 		if len(contents) <= 0 {
 			http.Error(w, "No contents found in CSV", http.StatusBadRequest)
 			return
 		}
-		columnNames := contents[0]
-		for l := range contents {
-			// split by commas and begin extracting the values
-			// commaContents := strings.Split(contents[l], ",")
-			if l == 0 {
-				fmt.Println(columnNames)
+		columnNames := strings.Split(contents[0], ",")
+		firstRow, gamesCache := getGames(columnNames)
+		fmt.Println(firstRow)
+		var gameIDSlice []int
+		var userIDSlice []int
+		competitorCache := make(map[string]int)
+		matchIDCache := make(map[string]int)
+		insertGameQuery := "select * from public.insert_game_sp($1::text);"
+		insertUserQuery := "select * from public.insert_or_update_user_sp($1::text,$2::text);"
+		insertMatchQuery := "select * from public.insert_match_sp($1::int4,$2::int4);"
+		insertCompetitorQuery := "select * from public.insert_competitor_sp($1::text);"
+		insertParticipantQuery := "select * from public.insert_participant_sp($1::int4,$2::int4);"
+		insertPredictionQuery := "select * from public.insert_prediction_sp($1::int4,$2::int4);"
+
+		for _, game := range gamesCache {
+			// get game Id from hitting postgres
+			// fmt.Println(game)
+			var id int
+			rows, err := u.Data.QueryContext(ctx, insertGameQuery, game)
+			if err != nil {
+				fmt.Println(err)
 			}
-			// loop through comma contents
-			// for _, cc := range commaContents {
-			// 	// fmt.Println(cc)
-			// }
+			if rows.Next() {
+				rows.Scan(&id)
+			}
+			rows.Close()
+			// fmt.Println(id)
+			gameIDSlice = append(gameIDSlice, id)
+
+			//upload a match
+			rows, err = u.Data.QueryContext(ctx, insertMatchQuery, eventID, id)
+			if err != nil {
+				fmt.Println(err)
+			}
+			if rows.Next() {
+				rows.Scan(&id)
+			}
+			rows.Close()
+			if matchIDCache[game] == 0 {
+				matchIDCache[game] = id
+			}
 		}
 
+		columnNames = strings.Split(contents[0], ",")
+		for l, v := range contents {
+			currentRowSplit := strings.Split(v, ",")
+			//skip first row cuz its whack
+			if l != 0 {
+				var userID int
+				var competitorID int
+				var participantID int
+				var predictionID int
+				// user created(replace with postgres)
+				rows, err := u.Data.QueryContext(ctx, insertUserQuery, strings.ToLower(currentRowSplit[1]), strings.ToLower(currentRowSplit[2]))
+
+				if err != nil {
+					fmt.Println(err)
+				}
+				if rows.Next() {
+					rows.Scan(&userID)
+				}
+				rows.Close()
+				userIDSlice = append(userIDSlice, userID)
+
+				// Create competitors
+				for colIndex, column := range currentRowSplit {
+					if colIndex < len(columnNames) {
+						if strings.Contains(columnNames[colIndex], "Predictions") {
+							// fmt.Println(len(currentRowSplit))
+							if competitorCache[column] == 0 {
+								rows, err := u.Data.QueryContext(ctx, insertCompetitorQuery, column)
+
+								if err != nil {
+									fmt.Println(err)
+								}
+								if rows.Next() {
+									rows.Scan(&competitorID)
+								}
+								rows.Close()
+								competitorCache[column] = competitorID
+
+							}
+							// match exist, map the competitor to the match
+							if matchIDCache[gamesCache[colIndex-3]] != 0 {
+								rows, err := u.Data.QueryContext(ctx, insertParticipantQuery, matchIDCache[gamesCache[colIndex-3]], competitorCache[column])
+								if err != nil {
+									fmt.Println(err)
+								}
+								if rows.Next() {
+									rows.Scan(&participantID)
+								}
+								rows.Close()
+
+								//create a prediction
+								rows, err = u.Data.QueryContext(ctx, insertPredictionQuery, userID, participantID)
+								if err != nil {
+									fmt.Println(err)
+								}
+								if rows.Next() {
+									rows.Scan(&predictionID)
+								}
+								rows.Close()
+							}
+						}
+					}
+				}
+			}
+		}
 		// Cleaning up buffer memory
 		buffer.Reset()
 		w.Write([]byte("Yes"))
@@ -83,4 +182,19 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}
+}
+
+func getGames(row []string) ([]string, []string) {
+	var games []string
+	for i, col := range row {
+		col = strings.Replace(col, "\"", "", -1)
+		if strings.Contains(col, "Predictions") {
+			col = strings.Replace(col, "Predictions [", "", -1)
+			col = strings.Trim(col, " ")
+			col = strings.Replace(col, "]", "", -1)
+			games = append(games, col)
+		}
+		row[i] = col
+	}
+	return row, games
 }

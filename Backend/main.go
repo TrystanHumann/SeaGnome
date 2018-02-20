@@ -23,7 +23,6 @@ func main() {
 	port, connectionString, twitchID := parseSettings()
 
 	db := sqlx.MustConnect("postgres", connectionString)
-
 	http.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
 	http.Handle("/results/upload", &handlers.UploadResults{Data: db})
 	http.Handle("/matches", &handlers.Matches{Data: db})
