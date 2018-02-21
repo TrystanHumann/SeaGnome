@@ -21,7 +21,6 @@ import (
 func main() {
 
 	port, connectionString, twitchID := parseSettings()
-
 	db := sqlx.MustConnect("postgres", connectionString)
 	http.Handle("/login", &handlers.Login{Data: db})
 	http.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
@@ -29,6 +28,7 @@ func main() {
 	http.Handle("/matches", &handlers.Matches{Data: db})
 	http.Handle("/events", &handlers.Events{Data: db})
 	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
+	http.Handle("/background", &handlers.Background{})
 	fmt.Println("Registering handlers.")
 
 	fmt.Println("Server listening to port: " + port)
