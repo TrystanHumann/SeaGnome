@@ -27,7 +27,6 @@ func main() {
 	http.Handle("/auth", &handlers.Auth{Data: db})
 	http.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
 	http.Handle("/results/upload", &handlers.UploadResults{Data: db})
-	http.Handle("/upload", &handlers.Uploads{Data: db})
 	http.Handle("/match", &handlers.Matches{Data: db})
 	http.Handle("/event", &handlers.Events{Data: db})
 	http.Handle("/score", &handlers.Scores{Data: db})
