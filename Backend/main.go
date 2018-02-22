@@ -24,12 +24,14 @@ func main() {
 
 	db := sqlx.MustConnect("postgres", connectionString)
 
-	http.Handle("/login", &handlers.Login{Data: db})
+	http.Handle("/auth", &handlers.Auth{Data: db})
 	http.Handle("/upload", &handlers.Uploads{Data: db})
-	http.Handle("/matches", &handlers.Matches{Data: db})
-	http.Handle("/events", &handlers.Events{Data: db})
+	http.Handle("/match", &handlers.Matches{Data: db})
+	http.Handle("/event", &handlers.Events{Data: db})
+	http.Handle("/score", &handlers.Scores{Data: db})
+	http.Handle("/game", &handlers.Games{Data: db})
+	http.Handle("/predictions", &handlers.Predictions{Data: db})
 	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
-	fmt.Println("Registering handlers.")
 
 	fmt.Println("Server listening to port: " + port)
 	fmt.Println("Press Ctrl + C to exit.")

@@ -14,13 +14,13 @@ import (
 	"github.com/trystanhumann/SeaGnome/Backend/types"
 )
 
-// Login : Handles requests dealing with matches
-type Login struct {
+// Auth : Handles requests dealing with matches
+type Auth struct {
 	Data *sqlx.DB
 }
 
 // Matches : Handles queries involving which matches are in a given event.
-func (l *Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (a *Auth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, ctxCancel := context.WithTimeout(r.Context(), 5*time.Second)
 	defer ctxCancel()
 
@@ -29,8 +29,9 @@ func (l *Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		un, pw, ok := r.BasicAuth()
 		if !ok {
 			http.Error(w, "auth not ok", http.StatusUnauthorized)
+			return
 		}
-		id, err := l.login(ctx, un, pw)
+		id, err := a.login(ctx, un, pw)
 		if err != nil {
 			http.Error(w, "invalid credentials", http.StatusUnauthorized)
 			return
@@ -56,18 +57,20 @@ func (l *Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		newID.ID = xid.New()
-		if err := l.createAdmin(ctx, newID); err != nil {
+		if err := a.createAdmin(ctx, newID); err != nil {
 			http.Error(w, "failed to create user", http.StatusInternalServerError)
+			return
 		}
 
 	case http.MethodPost:
-		valid, err := validateToken(ctx, r, l.Data)
+		valid, err := validateToken(ctx, r, a.Data)
 		if err != nil {
 			http.Error(w, "error validating auth", http.StatusInternalServerError)
 			return
 		}
 		if !valid {
 			http.Error(w, "invalid token", http.StatusUnauthorized)
+			return
 		}
 
 	default:
@@ -76,12 +79,12 @@ func (l *Login) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (l *Login) login(ctx context.Context, un, pw string) (*types.ID, error) {
+func (a *Auth) login(ctx context.Context, un, pw string) (*types.ID, error) {
 	query := "select * from public.login($1, $2, $3)"
 	id := new(types.ID)
 	token := xid.New()
 
-	if err := l.Data.GetContext(ctx, id, query, un, pw, token); err != nil {
+	if err := a.Data.GetContext(ctx, id, query, un, pw, token); err != nil {
 		return nil, err
 	}
 	if id.Token.IsNil() {
@@ -92,10 +95,10 @@ func (l *Login) login(ctx context.Context, un, pw string) (*types.ID, error) {
 	return id, nil
 }
 
-func (l *Login) createAdmin(ctx context.Context, id *types.ID) error {
+func (a *Auth) createAdmin(ctx context.Context, id *types.ID) error {
 	query := "select public.createadmin($1, $2, $3)"
 
-	_, err := l.Data.ExecContext(ctx, query, id.ID, id.Username, id.Password)
+	_, err := a.Data.ExecContext(ctx, query, id.ID, id.Username, id.Password)
 	return err
 }
 
