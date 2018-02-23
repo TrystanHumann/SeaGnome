@@ -54,8 +54,6 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Printf("%i\n", id)
-
 		// transfer contents of the file to our buffer
 		io.Copy(&buffer, file)
 
