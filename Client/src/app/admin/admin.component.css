@@ -1,0 +1,82 @@
+.body {}
+
+.row-flex {
+  margin-top: 80px;
+  display: -ms-flexbox;
+  /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap;
+  /* IE10 */
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+.column {
+  display: -ms-flexbox;
+  /* IE10 */
+  display: flex;
+  -ms-flex-wrap: wrap;
+  /* IE10 */
+  flex-wrap: wrap;
+  padding: 0 4px;
+  width: 50%;
+}
+
+.fullPage {
+  display: flex;
+  height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: flex-start;
+  background: url("../../assets/background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: -2;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  /*dim the background*/
+}
+
+.columnContainer {
+  width: 100%;
+  height: 100%;
+}
+
+.zIndexOne {
+  z-index: 1;
+}
+
+.flexBoxCustomContainerColumn {
+  z-index: 1;
+  margin: 15px;
+  border-radius: 25px;
+  display: flex;
+  /* IE10 */
+  background-color: rgba(255, 255, 255, 0.8);
+  border: solid white 5px;
+  flex-direction: column;
+  padding: 50px 50px;
+}
+
+.flexBoxCustomContainerRow {
+  z-index: 1;
+  margin: 15px;
+  border-radius: 25px;
+  display: flex;
+  /* IE10 */
+  background-color: rgba(255, 255, 255, 0.8);
+  border: solid white 5px;
+  flex-wrap: wrap;
+  flex-direction: row;
+  padding: 50px 50px;
+}

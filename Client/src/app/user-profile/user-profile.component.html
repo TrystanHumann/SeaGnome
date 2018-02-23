@@ -1,0 +1,102 @@
+<div class="fullPage">
+  <div class="container" style="width:100%; margin-top: 25px">
+    <div class="grid hero">
+      <h1 style="text-align:center">Leaderboard</h1>
+      <table style="table-layout: fixed;">
+        <thead>
+          <tr>
+            <th style="width:50px">Place</th>
+            <th>Username</th>
+            <th style="text-align:right">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor=" let user of this.testLeader; let i=index ">
+            <td class="columnPlace" style="text-align:left;padding-left:10px;">&#32;{{i + 1}}</td>
+            <td class="columnPlace"> {{user.username }}</td>
+            <td class="columnScore" style="text-align:right "> {{ user.score }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid content" style="overflow: auto;">
+      <h1 style="padding-left:15px;">Next Games</h1>
+      <div>
+        <table class="nextGames">
+          <thead>
+            <tr>
+              <th>
+                <br>Upcoming Games</th>
+              <th>{{RunnerOne.username}}
+                <br> favored</th>
+              <th>{{RunnerTwo.username}}
+                <br> favored </th>
+              <th>
+                <br>Abstain</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let gameResult of this.gamesBoard ">
+              <td>{{gameResult.title}}</td>
+              <td style="text-align:left">&emsp;{{gameResult.favorOnePercent}}</td>
+              <td style="text-align:left">&emsp;{{gameResult.favorTwoPercent}}</td>
+              <td style="text-align:left">&emsp;{{gameResult.abstainPercentage}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <hr>
+      <div style="text-align:center;">
+        <p style="font-size:18px;">{{RunnerOne.username}} has won {{RunnerOne.score}} out of {{RunnerOne.gamesPlayed}} matches.</p>
+        <p style="font-size:18px;">{{RunnerTwo.username}} has won {{RunnerTwo.score}} out of {{RunnerTwo.gamesPlayed}} matches.</p>
+      </div>
+    </div>
+
+    <div class="grid extra">
+      <h1 style="padding-left:15px;">User Card</h1>
+      <input type="text " name="firstname " placeholder="Search Username " style="border-radius:5px;height:25px;border:
+          0;padding-left:5px;width:50%;margin-left:15px;outline-width: 0;outline: none;">
+      <hr>
+      <div>
+        <h3 style="padding-left:15px;">Username here</h3>
+        <table style="width:100%;">
+          <tr>
+            <th>Current Raw Score:</th>
+            <td>69</td>
+          </tr>
+          <tr>
+            <th>Current % Score:</th>
+            <td>420%</td>
+          </tr>
+          <tr>
+            <th>Leaderboard placement:</th>
+            <td>13</td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+    <div class="grid extraTwo">
+      <div style="display:inline-block;width:100%">
+        <h1 style="padding-left:15px">(User)'s Predictions</h1>
+        <table style="width:100%">
+          <thead>
+            <tr>
+              <th>
+                <br>Games</th>
+              <th>User Prediction</th>
+              <th>Winner</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let gameResult of this.gamesBoard ">
+              <td>{{gameResult.title}}</td>
+              <td style="text-align:left">&emsp;{{RunnerOne.username}}</td>
+              <td style="text-align:left">&emsp;{{RunnerTwo.username}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
