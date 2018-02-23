@@ -1,25 +1,25 @@
 package handlers
 
 import (
-	"fmt"
 	"image/png"
 	"net/http"
 	"os"
 )
 
-//stuff for the background
+// Background : Updates the background of the site served to the client
 type Background struct {
 }
 
+// ServeHTTP : Handles requests to the backend path
 func (b *Background) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//get the img
 	imgData, err := png.Decode(r.Body)
 	if err != nil {
-		fmt.Println("Bad Image File. File must be a png")
+		http.Error(w, "failed to read file", http.StatusBadRequest)
 	}
 	newbackground, err := os.Create(r.Header.Get("Path"))
 	if err != nil {
-		fmt.Println("Bad Image File")
+		http.Error(w, "failed to save file", http.StatusInternalServerError)
 	}
 	png.Encode(newbackground, imgData)
 	newbackground.Close()
