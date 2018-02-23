@@ -37,7 +37,7 @@ func (s *Scores) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		scores, err := s.getScores(ctx, event, user)
 		if err != nil {
-			http.Error(w, "failed to retrieve scores", http.StatusInternalServerError)
+			http.Error(w, "failed to retrieve scores,"+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -50,10 +50,10 @@ func (s *Scores) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Scores) getScores(ctx context.Context, event, user int) ([]types.Score, error) {
-	query := "select * from public.getuserscores($1, $2)"
+	query := "select * from public.getuserscore($1, $2)"
 	var scores []types.Score
 
-	err := s.Data.Get(&scores, query, event, user)
+	err := s.Data.SelectContext(ctx, &scores, query, event, user)
 
 	return scores, err
 }

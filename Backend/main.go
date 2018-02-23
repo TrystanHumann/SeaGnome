@@ -24,13 +24,13 @@ type server struct {
 
 func main() {
 
-	port, connectionString, twitchID, mode := parseSettings()
+	port, connectionString, twitchID, mode, staticDir := parseSettings()
 
 	switch mode {
 	case "api":
 		initAPI(port, connectionString, twitchID)
 	case "file":
-		initFileServer(port)
+		initFileServer(port, staticDir)
 	}
 
 }
@@ -61,8 +61,26 @@ func initAPI(port, connectionString, twitchID string) {
 	}
 }
 
-func initFileServer(port string) {
+func initFileServer(port, staticDir string) {
+	fs := http.FileServer(http.Dir(staticDir))
 
+	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		pathParts := strings.Split(r.URL.Path, `/`)
+		lastPart := pathParts[len(pathParts)-1]
+		if strings.Contains(lastPart, ".") {
+			fs.ServeHTTP(w, r)
+		} else {
+			path := staticDir + "/index.html"
+			http.ServeFile(w, r, path)
+		}
+	}))
+
+	fmt.Println("Server listening to port: " + port)
+	fmt.Println("Press Ctrl + C to exit.")
+
+	if err := http.ListenAndServe(port, nil); err != nil {
+		fmt.Println(err)
+	}
 }
 
 func (s *server) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
@@ -79,12 +97,13 @@ func (s *server) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	s.r.ServeHTTP(rw, req)
 }
 
-func parseSettings() (string, string, string, string) {
+func parseSettings() (string, string, string, string, string) {
 	flags := map[string]string{
 		"env":     "",
 		"port":    "",
 		"secrets": "",
 		"mode":    "",
+		"static":  ".",
 	}
 
 	flag.Parse()
@@ -115,6 +134,8 @@ func parseSettings() (string, string, string, string) {
 			} else {
 				flags[option] = value
 			}
+		case "static":
+			flags[option] = value
 		}
 	}
 	// Make sure all required flags a1re found
@@ -132,7 +153,7 @@ func parseSettings() (string, string, string, string) {
 
 	connString := generateConnectionString(flags["secrets"], flags["env"])
 	twitchID := generateAppSettings(flags["secrets"])
-	return flags["port"], connString, twitchID, flags["mode"]
+	return flags["port"], connString, twitchID, flags["mode"], flags["static"]
 }
 
 // generateConnectionString : structures the connection string for the postgres db
