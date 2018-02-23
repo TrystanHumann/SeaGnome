@@ -1,11 +1,10 @@
--- DROP TABLE public.events CASCADE
-
-CREATE TABLE "public".events (
+CREATE TABLE public.events (
 	id smallserial NOT NULL,
-	"name" text NOT NULL,
-	complete boolean NOT NULL,
-	created_date timestamp with time zone,
-	PRIMARY KEY (id)
+	name text NOT NULL,
+	complete bool NOT NULL,
+	created_date timestamptz not NULL,
+	active bool not null,
+	CONSTRAINT events_pkey PRIMARY KEY (id)
 )
 WITH (
 	OIDS=FALSE

@@ -1,9 +1,9 @@
-CREATE TABLE "public".bonusquestions (
+CREATE TABLE public.bonusquestions (
 	id serial NOT NULL,
 	question text NOT NULL,
-	event int4 NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (event) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT
+	event int4 NOT NULL,
+	tiebreaker bool NOT null,
+	PRIMARY KEY (id)
 )
 WITH (
 	OIDS=FALSE

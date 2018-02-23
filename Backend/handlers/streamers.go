@@ -108,14 +108,18 @@ func (s *Streamer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // getStreamers : Requests the active streamers from the database
 func (s *Streamer) getStreamers(ctx context.Context, max int) ([]types.Streamer, error) {
+	query := "select * from public.getactivestreamers($1)"
 	var strums []types.Streamer
-	err := s.Data.SelectContext(ctx, &strums, "select * from public.getactivestreamers($1)", max)
+
+	err := s.Data.SelectContext(ctx, &strums, query, max)
 	return strums, err
 }
 
 // updateStreamer : Update a streamer in the database
 func (s *Streamer) updateStreamer(ctx context.Context, strum *types.Streamer) error {
-	_, err := s.Data.ExecContext(ctx, "select * from public.updatestreamer($1, $2)", strum.ID, strum.Active)
+	query := "select * from public.updatestreamer($1, $2)"
+
+	_, err := s.Data.ExecContext(ctx, query, strum.ID, strum.Active)
 	return err
 }
 

@@ -32,6 +32,20 @@ type Prediction struct {
 	Prediction string
 }
 
+// GamePrediction : A User's prediction for a game
+type GamePrediction struct {
+	Game       string `db:"game"`
+	Prediction string `db:"prediction"`
+	Winner     string `db:"winner"`
+}
+
+// Participant : A participants scores
+type Participant struct {
+	Name    string `db:"name"`
+	Wins    int    `db:"wins"`
+	Matches int    `db:"matches"`
+}
+
 // Match : The matches for an event
 type Match struct {
 	ID   int    `db:"id"`
@@ -70,6 +84,34 @@ type ID struct {
 	Username string    `json:"username"`
 	Password string    `json:"password"`
 	Expires  time.Time `json:"expires"`
+}
+
+// Score : The evaluation of a user's prediction.
+type Score struct {
+	User    string  `db:"user"`
+	Total   int     `db:"total"`
+	Percent float32 `db:"percent"`
+}
+
+// DBPredictionCount : The predictions for a participant in a game.
+type DBPredictionCount struct {
+	Game        string `db:"game"`
+	Participant string `db:"participant"`
+	Votes       int    `db:"votes"`
+}
+
+// PredictionCount : The top 3 predictions for up coming games.
+type PredictionCount struct {
+	Game string
+	Top  struct {
+		Competitor string
+		Votes      int
+	}
+	Second struct {
+		Competitor string
+		Votes      int
+	}
+	Abstain int
 }
 
 // TwitchStreamer : Twitch's view of a streamer's account.

@@ -27,7 +27,7 @@ func (u *UploadResults) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*1800000)
 	defer ctxCancel()
 	switch r.Method {
-	case http.MethodPut:
+	case http.MethodPost:
 		var buffer bytes.Buffer
 
 		file, header, err := r.FormFile("uploadFile")

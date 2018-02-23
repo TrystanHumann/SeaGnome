@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -23,7 +22,7 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*1800000)
 	defer ctxCancel()
 	switch r.Method {
-	case http.MethodPut:
+	case http.MethodPost:
 		var buffer bytes.Buffer
 
 		file, header, err := r.FormFile("uploadFile")
@@ -32,6 +31,7 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
 		fn := strings.Split(header.Filename, ".")
 		if len(fn) <= 0 {
 			http.Error(w, "Invalid file type", http.StatusBadRequest)
@@ -46,14 +46,10 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// ID of the event that we will be updating data for
 		eventID := r.FormValue("eventID")
 
-		id, err := strconv.Atoi(eventID)
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
-		fmt.Printf("%i\n", id)
 
 		// transfer contents of the file to our buffer
 		io.Copy(&buffer, file)
