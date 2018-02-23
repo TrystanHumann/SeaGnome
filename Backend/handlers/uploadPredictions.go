@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -46,8 +45,6 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		// ID of the event that we will be updating data for
 		eventID := r.FormValue("eventID")
-
-		id, err := strconv.Atoi(eventID)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)

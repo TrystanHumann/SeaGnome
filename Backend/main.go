@@ -33,6 +33,7 @@ func main() {
 	http.Handle("/game", &handlers.Games{Data: db})
 	http.Handle("/predictions", &handlers.Predictions{Data: db})
 	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
+	http.Handle("/background", &handlers.Background{})
 
 	fmt.Println("Server listening to port: " + port)
 	fmt.Println("Press Ctrl + C to exit.")
