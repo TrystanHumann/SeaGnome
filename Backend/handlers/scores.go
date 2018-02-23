@@ -37,7 +37,7 @@ func (s *Scores) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		scores, err := s.getScores(ctx, event, user)
 		if err != nil {
-			http.Error(w, "failed to retrieve scores,", http.StatusInternalServerError)
+			http.Error(w, "failed to retrieve scores", http.StatusInternalServerError)
 			return
 		}
 
