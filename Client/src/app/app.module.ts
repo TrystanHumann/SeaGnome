@@ -10,6 +10,7 @@ import { LandingComponent } from './landing/landing.component';
 import { AdminComponent } from './admin/admin.component';
 import { AdminService } from './admin/admin.service';
 import { HttpClientModule } from '@angular/common/http';
+import { UserProfileService } from './user-profile/user-profile.service';
 
 
 @NgModule({
@@ -26,7 +27,7 @@ import { HttpClientModule } from '@angular/common/http';
     RouteRoutingModule,
     HttpClientModule
   ],
-  providers: [AdminService],
+  providers: [AdminService, UserProfileService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

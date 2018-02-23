@@ -39,6 +39,13 @@ type GamePrediction struct {
 	Winner     string `db:"winner"`
 }
 
+// UserSearchResult : A User's search result
+type UserSearchResult struct {
+	ID      int    `db:"id"`
+	Twitch  string `db:"twitch"`
+	Twitter string `db:"twitter"`
+}
+
 // Participant : A participants scores
 type Participant struct {
 	Name    string `db:"name"`

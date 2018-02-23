@@ -1,6 +1,13 @@
 export interface Nextgames {
-  title: string;
-  favorOnePercent: number;
-  favorTwoPercent: number;
-  abstainPercentage: number;
+  Abstain: number;
+  Game: string;
+  Second: {
+    Competitor: string,
+    Votes: number,
+  };
+  Top: {
+    Competitor: string,
+    Votes: number,
+  };
 }
+

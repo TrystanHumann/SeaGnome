@@ -15,12 +15,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor=" let user of this.testLeader; let i=index ">
+            <tr class="userhover" *ngFor=" let user of this.leaderboard; let i=index " (click)="selectUser(user.User, i)">
               <td class="columnPlace" style="text-align:left;padding-left:10px;">&#32;{{i + 1}}</td>
-              <td class="columnPlace">
-                <a (click)="selectUser(user.username)"> {{user.username }} </a>
+              <td class="columnPlace">{{user.User}}
               </td>
-              <td class="columnScore" style="text-align:right "> {{ user.score }}</td>
+              <td class="columnScore" style="text-align:right "> {{user.Total}}</td>
             </tr>
           </tbody>
         </table>
@@ -46,10 +45,10 @@
             </thead>
             <tbody>
               <tr *ngFor="let gameResult of this.gamesBoard ">
-                <td>{{gameResult.title}}</td>
-                <td style="text-align:left">&emsp;{{gameResult.favorOnePercent}}</td>
-                <td style="text-align:left">&emsp;{{gameResult.favorTwoPercent}}</td>
-                <td style="text-align:left">&emsp;{{gameResult.abstainPercentage}}</td>
+                <td>{{gameResult.Game}}</td>
+                <td style="text-align:left">&emsp;{{gameResult.Top.Votes}}</td>
+                <td style="text-align:left">&emsp;{{gameResult.Second.Votes}}</td>
+                <td style="text-align:left">&emsp;{{gameResult.Abstain}}</td>
               </tr>
             </tbody>
           </table>
@@ -65,24 +64,26 @@
 
     <div class="grid extra">
       <h1 style="padding-left:15px;">User Card</h1>
-      <input type="text " name="firstname" [(ngModel)]="user" placeholder="Search Username " style="border-radius:5px;height:25px;border:
+      <input type="text " name="firstname" [(ngModel)]="user" placeholder="Search Username " style="border-radius:5px;height:30px;border:
           0;padding-left:5px;width:50%;margin-left:15px;outline-width: 0;outline: none;">
-
+      <button type="submit" class="btn btn-primary" style="height:30px;padding: 5px 5px;text-align:center;">
+        <i class="fa fa-search"></i>
+      </button>
       <hr>
       <div>
-        <h3 style="padding-left:15px;">{{user}}'s Profile</h3>
+        <h3 style="padding-left:15px;">{{userCard.User}}'s Profile</h3>
         <table style="width:100%;">
           <tr>
             <th>Current Raw Score:</th>
-            <td>32</td>
+            <td>{{userCard.Total}}</td>
           </tr>
           <tr>
             <th>Current % Score:</th>
-            <td>80%</td>
+            <td>{{userCard.Percent}}%</td>
           </tr>
           <tr>
             <th>Leaderboard placement:</th>
-            <td>13</td>
+            <td>{{userCard.LeaderboardPlacement}}</td>
           </tr>
         </table>
       </div>
@@ -102,10 +103,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let gameResult of this.gamesBoard ">
-                <td>{{gameResult.title}}</td>
-                <td style="text-align:left">&emsp;{{RunnerOne.username}}</td>
-                <td style="text-align:left">&emsp;{{RunnerTwo.username}}</td>
+              <tr *ngFor="let prediciton of this.userPrediction ">
+                <td>{{prediciton.Game}}</td>
+                <td style="text-align:left">&emsp;{{prediciton.Prediction}}</td>
+                <td style="text-align:left">&emsp;{{prediciton.Winner}}</td>
               </tr>
             </tbody>
           </table>

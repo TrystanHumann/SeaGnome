@@ -34,7 +34,7 @@ func main() {
 	http.Handle("/predictions", &handlers.Predictions{Data: db})
 	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
 	http.Handle("/background", &handlers.Background{})
-
+	http.Handle("/activeevent", &handlers.ActiveEvents{Data: db})
 	fmt.Println("Server listening to port: " + port)
 	fmt.Println("Press Ctrl + C to exit.")
 	if err := http.ListenAndServe(port, nil); err != nil {

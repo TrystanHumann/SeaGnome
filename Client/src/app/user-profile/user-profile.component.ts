@@ -3,6 +3,10 @@ import { Leaderboard } from '../models/Leaderboard.model';
 import { Nextgames } from '../models/Nextgames.model';
 import { Runner } from '../models/Runner.model';
 import { ActivatedRoute } from '@angular/router';
+import { UserProfileService } from './user-profile.service';
+import { ActiveEventResponse } from '../models/ActiveEventResponse.model';
+import { UserCard } from '../models/UserCard.model';
+import { Prediction } from '../models/Prediction.model';
 
 
 @Component({
@@ -13,68 +17,74 @@ import { ActivatedRoute } from '@angular/router';
 
 export class UserProfileComponent implements OnInit {
   public user: string;
+  public userCard: UserCard = { User: 'LOADING', Total: 0, Percent: 0, LeaderboardPlacement: 0 };
+  public activeEvent: ActiveEventResponse;
 
-  public testLeader = new Array<Leaderboard>(
-    { username: 'ReignSupremeSc2', score: 4600 }
-    , { username: 'L337G4M3PR3D1CT0R', score: 1337 }
-    , { username: 'TheLegend27', score: 330 }
-    , { username: 'SeaGnome', score: 322 }
-    , { username: 'Mario', score: 34 }
-    , { username: 'WonderBoy#1', score: 31 }
-    , { username: 'Iateyourpiefan1', score: 27 }
-    , { username: 'IHopeIWinThePredictions', score: 21 }
-    , { username: 'GoodGuesser12', score: 12 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-    , { username: 'SpyroTheDragon', score: 1 }
-  );
-  public gamesBoard = new Array<Nextgames>(
-    { title: 'Tomb Raider 1', favorOnePercent: 12, favorTwoPercent: 88, abstainPercentage: 0 }
-    , { title: 'Starcraft 2 Campaign', favorOnePercent: 35, favorTwoPercent: 60, abstainPercentage: 5 }
-    , { title: 'jimmy newtrons great adventure', favorOnePercent: 61, favorTwoPercent: 39, abstainPercentage: 0 }
-    , { title: 'Deadliest CatFish: The Game', favorOnePercent: 12, favorTwoPercent: 77, abstainPercentage: 11 }
-    , { title: 'Skyrim, any %', favorOnePercent: 31, favorTwoPercent: 55, abstainPercentage: 14 }
-    , { title: 'jimmy newtrons great adventure', favorOnePercent: 61, favorTwoPercent: 39, abstainPercentage: 0 }
-    , { title: 'Deadliest CatFish: The Game', favorOnePercent: 12, favorTwoPercent: 77, abstainPercentage: 11 }
-    , { title: 'Skyrim, any %', favorOnePercent: 31, favorTwoPercent: 55, abstainPercentage: 14 }
-    , { title: 'jimmy newtrons great adventure', favorOnePercent: 61, favorTwoPercent: 39, abstainPercentage: 0 }
-    , { title: 'Deadliest CatFish: The Game', favorOnePercent: 12, favorTwoPercent: 77, abstainPercentage: 11 }
-    , { title: 'Skyrim, any %', favorOnePercent: 31, favorTwoPercent: 55, abstainPercentage: 14 }
-    , { title: 'jimmy newtrons great adventure', favorOnePercent: 61, favorTwoPercent: 39, abstainPercentage: 0 }
-    , { title: 'Deadliest CatFish: The Game', favorOnePercent: 12, favorTwoPercent: 77, abstainPercentage: 11 }
-    , { title: 'Skyrim, any %', favorOnePercent: 31, favorTwoPercent: 55, abstainPercentage: 14 }
-    , { title: 'jimmy newtrons great adventure', favorOnePercent: 61, favorTwoPercent: 39, abstainPercentage: 0 }
-    , { title: 'Deadliest CatFish: The Game', favorOnePercent: 12, favorTwoPercent: 77, abstainPercentage: 11 }
-    , { title: 'Skyrim, any %', favorOnePercent: 31, favorTwoPercent: 55, abstainPercentage: 14 }
-    , { title: 'jimmy newtrons great adventure', favorOnePercent: 61, favorTwoPercent: 39, abstainPercentage: 0 }
-    , { title: 'Deadliest CatFish: The Game', favorOnePercent: 12, favorTwoPercent: 77, abstainPercentage: 11 }
-    , { title: 'Skyrim, any %', favorOnePercent: 31, favorTwoPercent: 55, abstainPercentage: 14 }
-  );
+  public leaderboard = new Array<Leaderboard>();
+  public gamesBoard = new Array<Nextgames>();
   public RunnerOne: Runner = { username: 'Spikevegeta', score: 21, gamesPlayed: 34 };
   public RunnerTwo: Runner = { username: 'Iateyourpie', score: 13, gamesPlayed: 34 };
-
-  constructor(private activatedRoute: ActivatedRoute) { }
+  public totalresults: Array<{ username: '', won: 0, total: 0 }>;
+  public userPrediction: Array<Prediction>;
+  constructor(private activatedRoute: ActivatedRoute, private userProfileService: UserProfileService) { }
 
   ngOnInit() {
     this.getUserFromRoute();
+    this.getActiveEvent();
+  }
+
+  getActiveEvent() {
+    this.userProfileService.getActiveEvent().subscribe(
+      (res: Array<ActiveEventResponse>) => {
+        if (res != null) {
+          console.log(res);
+          if (res.length > 0) {
+            this.activeEvent = res[0];
+            console.log(this.activeEvent);
+
+            // TESTING REMOVE AND PUT ACTIVE EVENT
+            this.getLeaderboard(45);
+            this.getGames(45);
+            this.getPredictions(45, this.user);
+          }
+        }
+      }
+    );
+  }
+
+  getLeaderboard(eventID: number) {
+    this.userProfileService.getLeaderBoard(eventID).subscribe(
+      (res) => {
+        if (res != null) {
+          console.log(res);
+          this.leaderboard = res;
+          this.findUserCard(this.user);
+        }
+      }
+    );
+  }
+  getGames(eventID: number) {
+    this.userProfileService.getGames(eventID).subscribe(
+      (res) => {
+        console.log('heres some data bitch', res);
+        if (res != null) {
+          this.gamesBoard = res;
+          console.log('gamerboard', this.gamesBoard);
+        }
+      }
+    );
+  }
+
+  getPredictions(eventID: number, user: string) {
+    this.userProfileService.getPredictions(eventID, user).subscribe(
+      (res) => {
+        console.log('prediciton data', res);
+        if (res != null) {
+          this.userPrediction = res;
+          console.log('prediction set', res);
+        }
+      }
+    );
   }
 
   getUserFromRoute() {
@@ -89,8 +99,25 @@ export class UserProfileComponent implements OnInit {
     console.log(user);
   }
 
-  selectUser(user) {
+  selectUser(user, index: number) {
     this.user = user;
+    this.getPredictions(45, this.user);
+    this.findUserCard(user);
+  }
+  findUserCard(user: string) {
+    const found = this.leaderboard.find(function (element) {
+      return element.User === user;
+    });
+    if (found != null) {
+      this.userCard.User = user;
+      this.userCard.Total = found.Total;
+      this.userCard.Percent = found.Percent;
+      this.userCard.LeaderboardPlacement = this.leaderboard.indexOf(found) + 1;
+    }
+  }
+
+  sumResults() {
+    // sum results from game board
   }
 
 }
