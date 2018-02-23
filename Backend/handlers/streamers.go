@@ -59,7 +59,7 @@ func (s *Streamer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case http.MethodPut:
-		strum := new(types.Streamer)
+		strum := new(types.StreamerSetRequest)
 		err := json.NewDecoder(r.Body).Decode(strum)
 		if err != nil {
 			http.Error(w, "invalid body", http.StatusBadRequest)
@@ -67,7 +67,7 @@ func (s *Streamer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// hit the twitch api to check if streamer exists
-		req, err := http.NewRequest(http.MethodGet, "https://api.twitch.tv/kraken/channels/"+strum.Tag, nil)
+		req, err := http.NewRequest(http.MethodGet, "https://api.twitch.tv/kraken/channels/"+strum.StreamerOne, nil)
 		if err != nil {
 			http.Error(w, "failed to verify streamer", http.StatusBadRequest)
 			return
@@ -79,6 +79,21 @@ func (s *Streamer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "failed to verify streamer", http.StatusBadRequest)
 			return
 		}
+
+		// hit the twitch api to check if streamer exists
+		req, err = http.NewRequest(http.MethodGet, "https://api.twitch.tv/kraken/channels/"+strum.StreamerTwo, nil)
+		if err != nil {
+			http.Error(w, "failed to verify streamer", http.StatusBadRequest)
+			return
+		}
+
+		req.Header.Add("Client-ID", s.TwitchID)
+		res, err = http.DefaultClient.Do(req)
+		if err != nil || res.StatusCode != 200 {
+			http.Error(w, "failed to verify streamer", http.StatusBadRequest)
+			return
+		}
+
 		err = s.addStreamer(ctx, strum)
 		if err != nil {
 			fmt.Println(err)
@@ -105,7 +120,7 @@ func (s *Streamer) updateStreamer(ctx context.Context, strum *types.Streamer) er
 }
 
 // addStreamer : Add a streamer to the database
-func (s *Streamer) addStreamer(ctx context.Context, strum *types.Streamer) error {
-	_, err := s.Data.ExecContext(ctx, "select * from public.insertstreamer($1, $2)", strum.Tag, strum.Active)
+func (s *Streamer) addStreamer(ctx context.Context, strum *types.StreamerSetRequest) error {
+	_, err := s.Data.ExecContext(ctx, "select * from public.insertstreamer($1, $2)", strum.StreamerOne, strum.StreamerTwo)
 	return err
 }

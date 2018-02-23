@@ -57,6 +57,12 @@ type Streamer struct {
 	Active bool   `json:"active" db:"active"`
 }
 
+// StreamerSetRequest : A twitch user updated to displayed on the front page
+type StreamerSetRequest struct {
+	StreamerOne string `json:"StreamerOne" db:"StreamerOne"`
+	StreamerTwo string `json:"StreamerTwo" db:"StreamerTwo"`
+}
+
 // ID : A user's id throught the application.
 type ID struct {
 	ID       xid.ID    `json:"id"`

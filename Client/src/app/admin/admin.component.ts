@@ -6,6 +6,7 @@ import { HttpParams } from '@angular/common/http';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { EventRequest } from '../models/EventRequest.model';
 import { EventResponse } from '../models/EventResponse.model';
+import { StreamerSetRequest } from '../models/StreamerSetRequest.model';
 
 @Component({
   selector: 'app-admin',
@@ -16,7 +17,10 @@ import { EventResponse } from '../models/EventResponse.model';
 
 
 export class AdminComponent implements OnInit {
+  public authenticated: boolean;
   public streamers: Streamer[];
+  public streamerOne: string;
+  public streamerTwo: string;
   public trustedUrl: SafeUrl[] = [];
   public EventName: string;
   public eventName: string;
@@ -28,7 +32,8 @@ export class AdminComponent implements OnInit {
   public editRowId: any;
   public editColumnId: any;
   public eventRequest: EventRequest = { Name: '' };
-  public manageEventsObject = { updatePredictions: null, updateEventResults: null, completeEvent: null, deleteEvent: null };
+  // tslint:disable-next-line:max-line-length
+  public manageEventsObject = { updatePredictions: null, updateEventResults: null, completeEvent: null, deleteEvent: null, activateEvent: null };
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal) { }
@@ -55,12 +60,12 @@ export class AdminComponent implements OnInit {
 
 
   ngOnInit() {
-    this.setStreamers();
+    this.getStreamers();
     this.eventCreateRows.push(this.startInsertRows);
     this.getEvents();
   }
 
-  public setStreamers() {
+  public getStreamers() {
     this.adminservice.getStreamers().subscribe(
       (streamers: Streamer[]) => {
         if (!streamers) {
@@ -73,6 +78,16 @@ export class AdminComponent implements OnInit {
       }
     );
   }
+
+  public updateStreamers() {
+    const streamRequest: StreamerSetRequest = { streamerOne: this.streamerOne, streamerTwo: this.streamerTwo };
+    this.adminservice.putStreamers(streamRequest).subscribe(
+      (res) => {
+        console.log(res);
+      }
+    );
+  }
+
 
   public createEvent() {
     this.adminservice.CreateEvent(this.eventRequest).subscribe(
@@ -109,12 +124,18 @@ export class AdminComponent implements OnInit {
         this.eventList = this.eventList.filter((elm) => elm.id !== this.manageEventsObject.deleteEvent);
       }
     );
+
+  }
+
+  public activateEvent() {
+    this.adminservice.ActivateEvent(this.manageEventsObject.activateEvent).subscribe(
+      (res) => {
+        this.eventList = this.eventList.filter((elm) => elm.id !== this.manageEventsObject.activateEvent);
+      }
+    );
   }
 
   public uploadExcel(event) {
-    console.log(this.eventName);
-    console.log('hello');
-    console.log(event);
     const fileList: FileList = event.target.files;
     if (fileList.length === 0) {
       return;
@@ -122,12 +143,12 @@ export class AdminComponent implements OnInit {
     const file = fileList[0];
 
     const formData = new FormData();
-    formData.append('file', file, file.name);
+    formData.append('uploadFile', file, file.name);
+    formData.append('eventID', this.manageEventsObject.updatePredictions);
     const headers = new Headers();
     /** No need to include Content-Type in Angular 4 */
 
     const params = new HttpParams();
-
     const options = {
       headers: headers,
       params: params,
@@ -139,6 +160,39 @@ export class AdminComponent implements OnInit {
         console.log(res);
       }
     );
+  }
+
+
+  public uploadResults(event) {
+    const fileList: FileList = event.target.files;
+    if (fileList.length === 0) {
+      return;
+    }
+    const file = fileList[0];
+
+    const formData = new FormData();
+    formData.append('uploadFile', file, file.name);
+    formData.append('eventID', this.manageEventsObject.updateEventResults);
+    const headers = new Headers();
+    /** No need to include Content-Type in Angular 4 */
+
+    const params = new HttpParams();
+    const options = {
+      headers: headers,
+      params: params,
+      reportProgress: true,
+    };
+
+    this.adminservice.uploadResults(formData, options).subscribe(
+      (res) => {
+        console.log(res);
+      }
+    );
+  }
+
+  public authenticateUser() {
+    console.log(this.authenticated);
+    this.authenticated = true;
   }
 
   // addNewRow Expands the modal's row

@@ -40,6 +40,23 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// POST
 	case http.MethodPost:
+		// Given an ID we want to update completed
+		id := r.URL.Query().Get("id")
+		complete := r.URL.Query().Get("completed")
+
+		if id != "" && complete != "" {
+			_, err := h.updateEvent(ctx, id, complete)
+			if err != nil {
+				http.Error(w, "error updating event", http.StatusBadRequest)
+				return
+			}
+		} else {
+			http.Error(w, "requires id and completed query parameters to update event", http.StatusBadRequest)
+			return
+		}
+
+	// PUT
+	case http.MethodPut:
 		var body types.Event
 		err := json.NewDecoder(r.Body).Decode(&body)
 		if err != nil {
@@ -56,23 +73,6 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		_, err = h.insertEvent(ctx, body.Name)
 		if err != nil {
 			http.Error(w, "error inserting event", http.StatusBadRequest)
-			return
-		}
-
-	// PUT
-	case http.MethodPut:
-		// Given an ID we want to update completed
-		id := r.URL.Query().Get("id")
-		complete := r.URL.Query().Get("completed")
-
-		if id != "" && complete != "" {
-			_, err := h.updateEvent(ctx, id, complete)
-			if err != nil {
-				http.Error(w, "error updating event", http.StatusBadRequest)
-				return
-			}
-		} else {
-			http.Error(w, "requires id and completed query parameters to update event", http.StatusBadRequest)
 			return
 		}
 
