@@ -63,8 +63,7 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		columnNames := strings.Split(contents[0], ",")
-		firstRow, gamesCache := getGames(columnNames)
-		fmt.Println(firstRow)
+		_, gamesCache := getGames(columnNames)
 		var gameIDSlice []int
 		var userIDSlice []int
 		competitorCache := make(map[string]int)
@@ -78,7 +77,6 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		for _, game := range gamesCache {
 			// get game Id from hitting postgres
-			// fmt.Println(game)
 			var id int
 			rows, err := u.Data.QueryContext(ctx, insertGameQuery, game)
 			if err != nil {
@@ -88,7 +86,6 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				rows.Scan(&id)
 			}
 			rows.Close()
-			// fmt.Println(id)
 			gameIDSlice = append(gameIDSlice, id)
 
 			//upload a match
@@ -130,7 +127,6 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				for colIndex, column := range currentRowSplit {
 					if colIndex < len(columnNames) {
 						if strings.Contains(columnNames[colIndex], "Predictions") {
-							// fmt.Println(len(currentRowSplit))
 							if competitorCache[column] == 0 {
 								rows, err := u.Data.QueryContext(ctx, insertCompetitorQuery, column)
 

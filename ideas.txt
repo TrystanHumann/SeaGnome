@@ -1,3 +1,11 @@
 On hover make sound play for the twitch stream you want (muted on load)
 maybe make the title more readable
 add a preview on the admin portal (beside the manage frontpage section)
+toggle button on leaderboard to sort by % instead of raw score
+leaderboard change score in presentation to score/games played
+
+"
+I was going to upload it with the results
+so each time a game is completed, upload a new csv
+that also has a column for when the next games would be played
+"

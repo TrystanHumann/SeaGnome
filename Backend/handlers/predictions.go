@@ -20,6 +20,7 @@ type Predictions struct {
 func (p *Predictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, ctxCancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer ctxCancel()
+	var userID int
 
 	switch r.Method {
 	case http.MethodGet:
@@ -31,13 +32,15 @@ func (p *Predictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		user, err := strconv.Atoi(query.Get("user"))
+		userSearchResult, err := p.getUserID(ctx, query.Get("user"))
 		if err != nil {
 			http.Error(w, "invalid user", http.StatusBadRequest)
 			return
 		}
-
-		preds, err := p.getGamePredictions(ctx, event, user)
+		if len(userSearchResult) > 0 {
+			userID = userSearchResult[0].ID
+		}
+		preds, err := p.getGamePredictions(ctx, event, userID)
 		if err != nil {
 			http.Error(w, "failed to get predictions, "+err.Error(), http.StatusInternalServerError)
 			return
@@ -49,6 +52,15 @@ func (p *Predictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "invalid method", http.StatusMethodNotAllowed)
 		return
 	}
+}
+
+func (p *Predictions) getUserID(ctx context.Context, user string) ([]types.UserSearchResult, error) {
+	query := "select * from public.getUserId_sp($1)"
+	var userResult []types.UserSearchResult
+
+	err := p.Data.SelectContext(ctx, &userResult, query, user)
+
+	return userResult, err
 }
 
 func (p *Predictions) getGamePredictions(ctx context.Context, event, user int) ([]types.GamePrediction, error) {

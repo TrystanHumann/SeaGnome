@@ -14,5 +14,4 @@ insert into public.streamers
     (tag, active)
 values($2, true);
 
-
 $function$

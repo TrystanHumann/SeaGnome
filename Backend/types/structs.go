@@ -39,6 +39,13 @@ type GamePrediction struct {
 	Winner     string `db:"winner"`
 }
 
+// UserSearchResult : A User's search result
+type UserSearchResult struct {
+	ID      int    `db:"id"`
+	Twitch  string `db:"twitch"`
+	Twitter string `db:"twitter"`
+}
+
 // Participant : A participants scores
 type Participant struct {
 	Name    string `db:"name"`
@@ -69,6 +76,12 @@ type Streamer struct {
 	ID     int    `json:"id" db:"id"`
 	Tag    string `json:"tag" db:"tag"`
 	Active bool   `json:"active" db:"active"`
+}
+
+// StreamerSetRequest : A twitch user updated to displayed on the front page
+type StreamerSetRequest struct {
+	StreamerOne string `json:"StreamerOne" db:"StreamerOne"`
+	StreamerTwo string `json:"StreamerTwo" db:"StreamerTwo"`
 }
 
 // ID : A user's id throught the application.

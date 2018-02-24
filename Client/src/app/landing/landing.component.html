@@ -1,11 +1,8 @@
 <div class="container fullscreen">
   <div class="twitch-screen">
-    <iframe class="hideOnSmallScreen" style="padding-left:50px;" src="http://player.twitch.tv/?channel=iateyourpie&muted=true"
-      height="50%" width="48%" frameborder="0" scrolling="no" allowfullscreen="true">
-    </iframe>
 
-    <iframe class="hideOnSmallScreen" style="padding-left:50px;" src="http://player.twitch.tv/?channel=spikevegeta&muted=true"
-      height="50%" width="48%" frameborder="0" scrolling="no" allowfullscreen="true">
+    <iframe *ngFor="let streamer of trustedUrl" class="hideOnSmallScreen" style="padding-left:50px;" [src]="streamer" height="50%"
+      width="48%" frameborder="0" scrolling="no" allowfullscreen="true">
     </iframe>
 
   </div>
@@ -14,10 +11,10 @@
       <h1 class="title" style="text-align:center">
         MOMAM Prediction Leaderboard
       </h1>
-      <input class="colorful" type="search" value="" placeholder="Search user" />
+      <input class="colorful" type="search" [(ngModel)]="user" value="doodo" placeholder="Search user" (keyup.enter)="enterPress()" />
       <div class="buttonContainer">
-        <button class="btn btn-primary moveOnResize" type="submit">Leaderboard</button>
-        <button class="btn btn-primary" type="submit" routerLink="/user">Search</button>
+        <button class="btn btn-primary moveOnResize" type="submit" routerLink="/user/user">Leaderboard</button>
+        <button class="btn btn-primary" type="submit" routerLink="/user/{{user}}">Search</button>
       </div>
     </div>
   </div>
