@@ -13,7 +13,7 @@
       </h1>
       <input class="colorful" type="search" [(ngModel)]="user" value="" placeholder="Search user" />
       <div class="buttonContainer">
-        <button class="btn btn-primary moveOnResize" type="submit">Leaderboard</button>
+        <button class="btn btn-primary moveOnResize" type="submit" routerLink="/user/user">Leaderboard</button>
         <button class="btn btn-primary" type="submit" routerLink="/user/{{user}}">Search</button>
       </div>
     </div>

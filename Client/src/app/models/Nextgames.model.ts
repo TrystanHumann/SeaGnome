@@ -5,7 +5,7 @@ export interface Nextgames {
     Competitor: string,
     Votes: number,
   };
-  Top: {
+  First: {
     Competitor: string,
     Votes: number,
   };

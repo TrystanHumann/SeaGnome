@@ -7,6 +7,7 @@ import { UserProfileService } from './user-profile.service';
 import { ActiveEventResponse } from '../models/ActiveEventResponse.model';
 import { UserCard } from '../models/UserCard.model';
 import { Prediction } from '../models/Prediction.model';
+import { GameRunners } from '../models/GameRunners.model';
 
 
 @Component({
@@ -17,13 +18,15 @@ import { Prediction } from '../models/Prediction.model';
 
 export class UserProfileComponent implements OnInit {
   public user: string;
-  public userCard: UserCard = { User: 'LOADING', Total: 0, Percent: 0, LeaderboardPlacement: 0 };
+  public userCard: UserCard = { User: 'N/A', Total: 0, Percent: 0, LeaderboardPlacement: 0 };
   public activeEvent: ActiveEventResponse;
 
   public leaderboard = new Array<Leaderboard>();
+  public leaderboardPercent = new Array<Leaderboard>();
   public gamesBoard = new Array<Nextgames>();
-  public RunnerOne: Runner = { username: 'Spikevegeta', score: 21, gamesPlayed: 34 };
-  public RunnerTwo: Runner = { username: 'Iateyourpie', score: 13, gamesPlayed: 34 };
+  public RunnerOne: Runner = { username: '', score: 0, gamesPlayed: 0 };
+  public RunnerTwo: Runner = { username: '', score: 0, gamesPlayed: 0 };
+  public runners = new Array<GameRunners>();
   public totalresults: Array<{ username: '', won: 0, total: 0 }>;
   public userPrediction: Array<Prediction>;
   public leaderFilter: boolean;
@@ -39,14 +42,13 @@ export class UserProfileComponent implements OnInit {
     this.userProfileService.getActiveEvent().subscribe(
       (res: Array<ActiveEventResponse>) => {
         if (res != null) {
-          console.log(res);
           if (res.length > 0) {
             this.activeEvent = res[0];
-            console.log(this.activeEvent);
 
             // TESTING REMOVE AND PUT ACTIVE EVENT
             this.getLeaderboard(45);
             this.getGames(45);
+            this.getMatchReults(45);
             this.getPredictions(45, this.user);
           }
         }
@@ -58,8 +60,17 @@ export class UserProfileComponent implements OnInit {
     this.userProfileService.getLeaderBoard(eventID).subscribe(
       (res) => {
         if (res != null) {
-          console.log(res);
           this.leaderboard = res;
+          // sort by % and fix leaderboard
+          this.leaderboardPercent = this.leaderboard.sort(function (a, b) {
+            if (a.Percent < b.Percent) {
+              return 1;
+            }
+            if (a.Percent > b.Percent) {
+              return -1;
+            }
+            return 0;
+          });
           this.findUserCard(this.user);
         }
       }
@@ -68,10 +79,8 @@ export class UserProfileComponent implements OnInit {
   getGames(eventID: number) {
     this.userProfileService.getGames(eventID).subscribe(
       (res) => {
-        console.log('heres some data bitch', res);
         if (res != null) {
           this.gamesBoard = res;
-          console.log('gamerboard', this.gamesBoard);
         }
       }
     );
@@ -80,10 +89,8 @@ export class UserProfileComponent implements OnInit {
   getPredictions(eventID: number, user: string) {
     this.userProfileService.getPredictions(eventID, user).subscribe(
       (res) => {
-        console.log('prediciton data', res);
         if (res != null) {
           this.userPrediction = res;
-          console.log('prediction set', res);
         }
       }
     );
@@ -93,19 +100,16 @@ export class UserProfileComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       const user = params['user'];
       this.user = user;
-      this.searchUser(user);
     });
   }
 
-  searchUser(user: string) {
-    console.log(user);
-  }
 
   selectUser(user, index: number) {
     this.user = user;
     this.getPredictions(45, this.user);
     this.findUserCard(user);
   }
+
   findUserCard(user: string) {
     const found = this.leaderboard.find(function (element) {
       return element.User === user;
@@ -118,8 +122,22 @@ export class UserProfileComponent implements OnInit {
     }
   }
 
-  sumResults() {
-    // sum results from game board
+  searchUser() {
+    this.getPredictions(45, this.user);
+    this.findUserCard(this.user);
+  }
+
+  swapLeaderboard() {
+    this.leaderFilter = !this.leaderFilter;
+  }
+
+  getMatchReults(eventID: number) {
+    this.userProfileService.getGamesResult(eventID).subscribe(
+      (res) => {
+        console.log(res);
+        this.runners = res;
+      }
+    );
   }
 
 }

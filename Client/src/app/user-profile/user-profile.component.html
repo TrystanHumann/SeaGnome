@@ -12,29 +12,15 @@
         <h1 style="display:inline-block;vertical-align:middle;">Leaderboard
         </h1>
         <label class="switch slider-style ">
-          <input type="checkbox">
+          <input type="checkbox" (click)="this.swapLeaderboard()">
           <span class="slider round"></span>
         </label>
 
       </div>
       <div class="scrollbar" id="scrollbar" style="width:100%;height:90%;background-color:transparent;">
-        <table style="width: 100%;">
-          <thead>
-            <tr>
-              <th style="width:50px">Place</th>
-              <th>Username</th>
-              <th style="text-align:right">Score</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="userhover" *ngFor=" let user of this.leaderboard; let i=index " (click)="selectUser(user.User, i)">
-              <td class="columnPlace" style="text-align:left;padding-left:10px;">&#32;{{i + 1}}</td>
-              <td class="columnPlace">{{user.User}}
-              </td>
-              <td class="columnScore" style="text-align:right "> {{user.Total}}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div *ngIf="!leaderFilter; then score; else percent">
+
+        </div>
       </div>
       <br>
     </div>
@@ -58,7 +44,7 @@
             <tbody>
               <tr *ngFor="let gameResult of this.gamesBoard ">
                 <td>{{gameResult.Game}}</td>
-                <td style="text-align:left">&emsp;{{gameResult.Top.Votes}}</td>
+                <td style="text-align:left">&emsp;{{gameResult.First.Votes}}</td>
                 <td style="text-align:left">&emsp;{{gameResult.Second.Votes}}</td>
                 <td style="text-align:left">&emsp;{{gameResult.Abstain}}</td>
               </tr>
@@ -67,10 +53,9 @@
         </div>
       </div>
       <hr>
-      <div style="text-align:center;">
-        <p style="font-size:18px;">{{RunnerOne.username}} has won {{RunnerOne.score}} out of {{RunnerOne.gamesPlayed}} matches.</p>
-        <p style="font-size:18px;">{{RunnerTwo.username}} has won {{RunnerTwo.score}} out of {{RunnerTwo.gamesPlayed}} matches.</p>
-        <br>
+      <div *ngFor="let runner of runners " style="text-align:center;">
+        <p></p>
+        <p style="font-size:18px;">{{runner.Name}} has won {{runner.Wins}} out of {{runner.Matches}} matches.</p>
       </div>
     </div>
 
@@ -78,13 +63,16 @@
       <h1 style="padding-left:15px;">User Card</h1>
       <input type="text " name="firstname" [(ngModel)]="user" placeholder="Search Username " style="border-radius:5px;height:30px;border:
           0;padding-left:5px;width:50%;margin-left:15px;outline-width: 0;outline: none;">
-      <button type="submit" class="btn btn-primary" style="height:30px;padding: 5px 5px;text-align:center;">
+      <button type="submit" class="btn btn-primary" style="height:30px;padding: 5px 5px;text-align:center;" (click)="searchUser()">
         <i class="fa fa-search"></i>
       </button>
       <hr>
       <div>
-        <h3 style="padding-left:15px;font-size:1.15em">{{userCard.User}}'s Profile</h3>
         <table style="width:100%;">
+          <tr>
+            <th>User:</th>
+            <td>{{userCard.User}}</td>
+          </tr>
           <tr>
             <th>Current Raw Score:</th>
             <td>{{userCard.Total}}</td>
@@ -126,3 +114,43 @@
     </div>
 
   </div>
+
+  <ng-template #score>
+    <table style="width: 100%;">
+      <thead>
+        <tr>
+          <th style="width:50px">Place</th>
+          <th>Username</th>
+          <th style="text-align:right">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="userhover" *ngFor=" let user of this.leaderboard; let i=index " (click)="selectUser(user.User, i)">
+          <td class="columnPlace" style="text-align:left;padding-left:10px;">&#32;{{i + 1}}</td>
+          <td class="columnPlace">{{user.User}}
+          </td>
+          <td class="columnScore" style="text-align:right "> {{user.Total}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-template>
+
+  <ng-template #percent>
+    <table style="width: 100%;">
+      <thead>
+        <tr>
+          <th style="width:50px">Place</th>
+          <th>Username</th>
+          <th style="text-align:right">Accuracy</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="userhover" *ngFor=" let user of this.leaderboardPercent; let i=index " (click)="selectUser(user.User, i)">
+          <td class="columnPlace" style="text-align:left;padding-left:10px;">&#32;{{i + 1}}</td>
+          <td class="columnPlace">{{user.User}}
+          </td>
+          <td class="columnScore" style="text-align:right "> {{user.Percent}}%</td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-template>

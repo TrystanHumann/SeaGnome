@@ -32,6 +32,9 @@ export class AdminComponent implements OnInit {
   public editRowId: any;
   public editColumnId: any;
   public eventRequest: EventRequest = { Name: '' };
+  // Password and credential html models
+  public Username: string;
+  public Password: string;
   // tslint:disable-next-line:max-line-length
   public manageEventsObject = { updatePredictions: null, updateEventResults: null, completeEvent: null, deleteEvent: null, activateEvent: null };
   constructor(public adminservice: AdminService,
@@ -83,7 +86,6 @@ export class AdminComponent implements OnInit {
     const streamRequest: StreamerSetRequest = { streamerOne: this.streamerOne, streamerTwo: this.streamerTwo };
     this.adminservice.putStreamers(streamRequest).subscribe(
       (res) => {
-        console.log(res);
       }
     );
   }
@@ -157,7 +159,6 @@ export class AdminComponent implements OnInit {
 
     this.adminservice.uploadExcel(formData, options).subscribe(
       (res) => {
-        console.log(res);
       }
     );
   }
@@ -185,19 +186,30 @@ export class AdminComponent implements OnInit {
 
     this.adminservice.uploadResults(formData, options).subscribe(
       (res) => {
-        console.log(res);
       }
     );
   }
 
+
   public authenticateUser() {
-    console.log(this.authenticated);
-    this.authenticated = true;
+    // console.log(this.authenticated);
+    // this.authenticated = true;
+    if (this.Password.trim() !== '' && this.Username.trim() !== '') {
+      // Check if user should be authenticated
+      this.adminservice.basicAuthenticateUser(this.Username, this.Password).subscribe(res => {
+        this.authenticated = true;
+      }, err => {
+        console.log(err);
+        this.authenticated = false;
+      });
+    } else {
+      // invalid input
+      this.authenticated = false;
+    }
   }
 
   // addNewRow Expands the modal's row
   public addNewRow() {
-    console.log('clicky');
     this.eventCreateRows.push({
       id: this.eventCreateRows.length + 1,
       game: 'Insert Game',

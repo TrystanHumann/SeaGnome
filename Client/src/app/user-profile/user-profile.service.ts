@@ -6,6 +6,8 @@ import { ActiveEventResponse } from '../models/ActiveEventResponse.model';
 import { Leaderboard } from '../models/Leaderboard.model';
 import { Nextgames } from '../models/Nextgames.model';
 import { Prediction } from '../models/Prediction.model';
+import { Runner } from '../models/Runner.model';
+import { GameRunners } from '../models/GameRunners.model';
 
 @Injectable()
 export class UserProfileService {
@@ -22,6 +24,10 @@ export class UserProfileService {
 
   getGames(eventID: number): Observable<Array<Nextgames>> {
     return this.http.get<Array<Nextgames>>(`${environment.Base_URL}game?past=false&event=${eventID}`);
+  }
+
+  getGamesResult(eventID: number): Observable<Array<GameRunners>> {
+    return this.http.get<Array<GameRunners>>(`${environment.Base_URL}game?past=true&event=${eventID}`);
   }
 
   getPredictions(eventID: number, user: string): Observable<Array<Prediction>> {

@@ -109,8 +109,8 @@ type DBPredictionCount struct {
 
 // PredictionCount : The top 3 predictions for up coming games.
 type PredictionCount struct {
-	Game string
-	Top  struct {
+	Game  string
+	First struct {
 		Competitor string
 		Votes      int
 	}

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Streamer } from '../models/Streamer.model';
 import { Observable } from 'rxjs/Observable';
@@ -47,5 +47,13 @@ export class AdminService {
 
   public uploadResults(excelFile: FormData, options): any {
     return this.http.put(environment.Base_URL + 'results/upload', excelFile, options);
+  }
+  // Address what the return type should be
+  public basicAuthenticateUser(username: string, password: string): Observable<any> {
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
+    headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    // withCredentials should use cookie ?
+    return this.http.get(environment.Base_URL + 'auth', { headers: headers, withCredentials: true });
   }
 }
