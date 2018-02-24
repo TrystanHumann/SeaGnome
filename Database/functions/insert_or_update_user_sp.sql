@@ -14,4 +14,4 @@ begin
 	return query
 	select u.id as returnid from public.users u where u.twitchun = twitchUsername;
 	--RAISE INFO 'Out variable: %', outUserID;
-end $function$
+end $function$;

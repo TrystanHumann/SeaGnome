@@ -1,7 +1,8 @@
-CREATE TABLE "public".competitors (
+CREATE TABLE public.competitors (
 	id smallserial NOT NULL,
 	"name" text NOT NULL,
-	PRIMARY KEY (id)
+	CONSTRAINT competitors_pk PRIMARY KEY (id),
+	CONSTRAINT competitors_unique_competitors UNIQUE (name)
 )
 WITH (
 	OIDS=FALSE

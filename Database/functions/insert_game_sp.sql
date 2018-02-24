@@ -13,4 +13,4 @@ begin
 	return query
 	select g.id as returnid from public.games g where g."name" = gamename;
 	--RAISE INFO 'Out variable: %', outUserID;
-end $function$
+end $function$;

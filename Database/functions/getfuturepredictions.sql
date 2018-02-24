@@ -14,8 +14,8 @@ AS $function$
 	  on par."match" = mat.id
 	join public.games as gam
 	  on mat.game = gam.id
-	--where mat.scheduled > now()
-	where ((mat.event = $1) or $1 = -1)
+	where mat.scheduled > now()
+	  and ((mat.event = $1) or $1 = -1)
 	group by com.id, gam."name", mat.scheduled
 	order by mat.scheduled asc, com.id desc
-$function$
+$function$;

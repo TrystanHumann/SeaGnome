@@ -7,12 +7,11 @@ AS $function$
 truncate public.streamers;
 
 insert into public.streamers
-	(tag, active)
+    (tag, active)
 values($1, true);
 
 insert into public.streamers
-	(tag, active)
+    (tag, active)
 values($2, true);
-
 
 $function$

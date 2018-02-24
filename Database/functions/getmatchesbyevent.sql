@@ -10,4 +10,4 @@ AS $function$
 	  on m.game = g.id
 	where m.event = $1;
 
-$function$
+$function$;

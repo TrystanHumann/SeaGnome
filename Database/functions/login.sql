@@ -9,4 +9,4 @@ AS $function$
       and public.auth.password = crypt($2, public.auth.salt)
     returning public.auth.id, public.auth.username, public.auth.token, public.auth.expires;
 
-$function$
+$function$;

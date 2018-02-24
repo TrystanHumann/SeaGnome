@@ -30,4 +30,4 @@ AS $function$
 	group by users.id
 	order by count(preds.id) desc
 
- $function$
+ $function$;

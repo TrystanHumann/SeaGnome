@@ -10,4 +10,4 @@ AS $function$
 	  on p.competitor = c.id
 	where p."match" = $1;
 
-$function$
+$function$;

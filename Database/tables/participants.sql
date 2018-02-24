@@ -1,10 +1,11 @@
-CREATE TABLE "public".participants (
+CREATE TABLE public.participants (
 	id serial NOT NULL,
 	"match" int4 NOT NULL,
 	competitor int4 NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (match) REFERENCES matches(id),
-	FOREIGN KEY (competitor) REFERENCES competitors(id)
+	CONSTRAINT participants_pkey PRIMARY KEY (id),
+	CONSTRAINT participants_unique_competitor_match UNIQUE (match, competitor),
+	CONSTRAINT particiants_match_match_id_fk FOREIGN KEY (match) REFERENCES matches(id),
+	CONSTRAINT participant_competitor_competitors_id_fk FOREIGN KEY (competitor) REFERENCES competitors(id)
 )
 WITH (
 	OIDS=FALSE

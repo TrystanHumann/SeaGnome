@@ -1,9 +1,9 @@
-CREATE TABLE "public".bonusanswers (
+CREATE TABLE public.bonusanswers (
 	id serial NOT NULL,
 	question int4 NOT NULL,
 	answer text NOT NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (question) REFERENCES bonusquestions(id) ON UPDATE RESTRICT ON DELETE RESTRICT
+	CONSTRAINT bonusanswers_pkey PRIMARY KEY (id),
+	CONSTRAINT bonusanswers_question_fkey FOREIGN KEY (question) REFERENCES bonusquestions(id) ON UPDATE RESTRICT ON DELETE RESTRICT
 )
 WITH (
 	OIDS=FALSE

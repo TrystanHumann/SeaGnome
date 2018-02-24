@@ -14,4 +14,4 @@ begin
 	return query
 	select c.id as returnid from public.competitors c where c."name" = competitorname;
 	--RAISE INFO 'Out variable: %', outUserID;
-end $function$
+end $function$;

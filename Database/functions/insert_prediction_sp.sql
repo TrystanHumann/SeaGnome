@@ -13,4 +13,4 @@ begin
 	return query
 	select p.id as returnid from public.predictions p where p."user" = userid and p.participant = participantid;	
 	--RAISE INFO 'Out variable: %', outUserID;
-end $function$
+end $function$;
