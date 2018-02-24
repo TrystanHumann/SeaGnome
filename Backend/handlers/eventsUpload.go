@@ -22,8 +22,6 @@ type EventsUpload struct {
 func (h *EventsUpload) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	_, ctxCancel := context.WithTimeout(r.Context(), time.Second*15)
 	defer ctxCancel()
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET,POST,OPTIONS,DELETE,PUT")
 	switch r.Method {
 	// GET
 	case http.MethodGet:

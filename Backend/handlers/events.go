@@ -20,7 +20,7 @@ type Events struct {
 func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*15)
 	defer ctxCancel()
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	switch r.Method {
 	// GET
 	case http.MethodGet:
