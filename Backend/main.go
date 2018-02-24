@@ -18,12 +18,27 @@ import (
 	"github.com/trystanhumann/SeaGnome/Backend/handlers"
 )
 
+type server struct {
+	r *http.ServeMux
+}
+
 func main() {
 
-	port, connectionString, twitchID := parseSettings()
+	port, connectionString, twitchID, mode, staticDir := parseSettings()
 
+	switch mode {
+	case "api":
+		initAPI(port, connectionString, twitchID)
+	case "file":
+		initFileServer(port, staticDir)
+	}
+
+}
+
+func initAPI(port, connectionString, twitchID string) {
 	db := sqlx.MustConnect("postgres", connectionString)
 
+<<<<<<< HEAD
 	http.Handle("/auth", &handlers.Auth{Data: db})
 	http.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
 	http.Handle("/results/upload", &handlers.UploadResults{Data: db})
@@ -35,18 +50,74 @@ func main() {
 	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
 	http.Handle("/background", &handlers.Background{})
 	http.Handle("/activeevent", &handlers.ActiveEvents{Data: db})
+=======
+	routes := http.NewServeMux()
+
+	routes.Handle("/auth", &handlers.Auth{Data: db})
+	routes.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
+	routes.Handle("/results/upload", &handlers.UploadResults{Data: db})
+	routes.Handle("/match", &handlers.Matches{Data: db})
+	routes.Handle("/event", &handlers.Events{Data: db})
+	routes.Handle("/score", &handlers.Scores{Data: db})
+	routes.Handle("/game", &handlers.Games{Data: db})
+	routes.Handle("/predictions", &handlers.Predictions{Data: db})
+	routes.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
+	routes.Handle("/background", &handlers.Background{})
+
+	http.Handle("/", &server{routes})
+
+>>>>>>> origin/development
 	fmt.Println("Server listening to port: " + port)
 	fmt.Println("Press Ctrl + C to exit.")
+
 	if err := http.ListenAndServe(port, nil); err != nil {
 		fmt.Println(err)
 	}
 }
 
-func parseSettings() (string, string, string) {
+func initFileServer(port, staticDir string) {
+	fs := http.FileServer(http.Dir(staticDir))
+
+	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		pathParts := strings.Split(r.URL.Path, `/`)
+		lastPart := pathParts[len(pathParts)-1]
+		if strings.Contains(lastPart, ".") {
+			fs.ServeHTTP(w, r)
+		} else {
+			path := staticDir + "/index.html"
+			http.ServeFile(w, r, path)
+		}
+	}))
+
+	fmt.Println("Server listening to port: " + port)
+	fmt.Println("Press Ctrl + C to exit.")
+
+	if err := http.ListenAndServe(port, nil); err != nil {
+		fmt.Println(err)
+	}
+}
+
+func (s *server) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	if origin := req.Header.Get("Origin"); origin != "" {
+		rw.Header().Set("Access-Control-Allow-Origin", origin)
+		rw.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		rw.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Auth-Token")
+	}
+	// Stop here if its Preflighted OPTIONS request
+	if req.Method == "OPTIONS" {
+		return
+	}
+	s.r.ServeHTTP(rw, req)
+}
+
+func parseSettings() (string, string, string, string, string) {
 	flags := map[string]string{
 		"env":     "",
 		"port":    "",
 		"secrets": "",
+		"mode":    "",
+		"static":  ".",
 	}
 
 	flag.Parse()
@@ -59,7 +130,7 @@ func parseSettings() (string, string, string) {
 		}
 		option := flagSections[0]
 		value := flagSections[1]
-		switch flagSections[0] {
+		switch option {
 		case "env":
 			flags[option] = value
 		case "port":
@@ -70,6 +141,14 @@ func parseSettings() (string, string, string) {
 			value = ":" + value
 			flags[option] = value
 		case "secrets":
+			flags[option] = value
+		case "mode":
+			if value != "api" && value != "file" {
+				fmt.Println("mode must be `api` or `file`")
+			} else {
+				flags[option] = value
+			}
+		case "static":
 			flags[option] = value
 		}
 	}
@@ -88,7 +167,7 @@ func parseSettings() (string, string, string) {
 
 	connString := generateConnectionString(flags["secrets"], flags["env"])
 	twitchID := generateAppSettings(flags["secrets"])
-	return flags["port"], connString, twitchID
+	return flags["port"], connString, twitchID, flags["mode"], flags["static"]
 }
 
 // generateConnectionString : structures the connection string for the postgres db

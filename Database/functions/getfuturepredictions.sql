@@ -1,8 +1,8 @@
-CREATE OR REPLACE FUNCTION public.getfuturepredictions()
+CREATE OR REPLACE FUNCTION public.getfuturepredictions(event integer)
  RETURNS TABLE(game text, participant text, votes bigint)
  LANGUAGE sql
 AS $function$
-	select gam."name" as game, com."name" as participant, count(com.id) as votes
+	select trim(gam."name") as game, trim(com."name") as participant, count(com.id) as votes
 	from public.predictions as pre
 	join public.users as use
 	  on pre."user" = use.id
@@ -15,6 +15,7 @@ AS $function$
 	join public.games as gam
 	  on mat.game = gam.id
 	--where mat.scheduled > now()
+	where ((mat.event = $1) or $1 = -1)
 	group by com.id, gam."name", mat.scheduled
-	order by mat.scheduled asc, count(com.id) desc
+	order by mat.scheduled asc, com.id desc
 $function$

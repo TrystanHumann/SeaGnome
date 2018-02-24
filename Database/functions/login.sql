@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION public.login(username text, password text, token bytea)
- RETURNS TABLE(id bytea, username text, token bytea, expires timestamptz)
+ RETURNS TABLE(id bytea, username text, token bytea, expires timestamp with time zone)
  LANGUAGE sql
 AS $function$
 

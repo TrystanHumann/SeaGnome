@@ -4,3 +4,4 @@ Backend/env/*
 debug
 dbconfig.json
 appsettings.json
+Backend/momam/*
