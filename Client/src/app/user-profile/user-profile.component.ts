@@ -26,6 +26,8 @@ export class UserProfileComponent implements OnInit {
   public RunnerTwo: Runner = { username: 'Iateyourpie', score: 13, gamesPlayed: 34 };
   public totalresults: Array<{ username: '', won: 0, total: 0 }>;
   public userPrediction: Array<Prediction>;
+  public leaderFilter: boolean;
+
   constructor(private activatedRoute: ActivatedRoute, private userProfileService: UserProfileService) { }
 
   ngOnInit() {
