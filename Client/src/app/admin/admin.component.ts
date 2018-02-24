@@ -230,7 +230,6 @@ export class AdminComponent implements OnInit {
   public changePassword() {
     this.adminservice.changePassword(this.oldPassword, this.newPassword).subscribe(
       (res) => {
-        console.log(res);
       },
       (err) => {
         console.log(err);

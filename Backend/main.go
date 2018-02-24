@@ -45,6 +45,7 @@ func initAPI(port, connectionString, twitchID string) {
 	routes.Handle("/results/upload", &handlers.UploadResults{Data: db})
 	routes.Handle("/match", &handlers.Matches{Data: db})
 	routes.Handle("/event", &handlers.Events{Data: db})
+	routes.Handle("/activeevent", &handlers.ActiveEvents{Data: db})
 	routes.Handle("/score", &handlers.Scores{Data: db})
 	routes.Handle("/game", &handlers.Games{Data: db})
 	routes.Handle("/predictions", &handlers.Predictions{Data: db})

@@ -134,7 +134,6 @@ export class UserProfileComponent implements OnInit {
   getMatchReults(eventID: number) {
     this.userProfileService.getGamesResult(eventID).subscribe(
       (res) => {
-        console.log(res);
         this.runners = res;
       }
     );
