@@ -11,7 +11,7 @@
       <h1 class="title" style="text-align:center">
         MOMAM Prediction Leaderboard
       </h1>
-      <input class="colorful" type="search" [(ngModel)]="user" value="" placeholder="Search user" />
+      <input class="colorful" type="search" [(ngModel)]="user" value="doodo" placeholder="Search user" (keyup.enter)="enterPress()" />
       <div class="buttonContainer">
         <button class="btn btn-primary moveOnResize" type="submit" routerLink="/user/user">Leaderboard</button>
         <button class="btn btn-primary" type="submit" routerLink="/user/{{user}}">Search</button>
