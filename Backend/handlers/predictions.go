@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -40,7 +39,6 @@ func (p *Predictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		if len(userSearchResult) > 0 {
 			userID = userSearchResult[0].ID
-			fmt.Println(userSearchResult)
 		}
 		preds, err := p.getGamePredictions(ctx, event, userID)
 		if err != nil {
