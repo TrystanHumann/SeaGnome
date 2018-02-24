@@ -7,6 +7,7 @@ GRANT USAGE ON public.games_id_seq TO momam ;
 GRANT USAGE ON public.competitors_id_seq TO momam ;
 GRANT USAGE ON public.bonusquestions_id_seq TO momam ;
 GRANT USAGE ON public.bonusanswers_id_seq TO momam ;
+GRANT USAGE ON public.events_id_seq TO momam ;
 
 GRANT SELECT ON public.auth TO momam ;
 GRANT INSERT ON public.auth TO momam ;
