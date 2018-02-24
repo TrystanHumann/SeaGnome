@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Streamer } from '../models/Streamer.model';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { AdminService } from '../admin/admin.service';
+import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-landing',
@@ -14,7 +17,7 @@ export class LandingComponent implements OnInit {
   public user: string;
 
   constructor(public adminservice: AdminService,
-    private sanitizer: DomSanitizer) { }
+    private sanitizer: DomSanitizer , private router: Router) { }
 
   ngOnInit() {
     this.setStreamers();
@@ -32,5 +35,9 @@ export class LandingComponent implements OnInit {
         });
       }
     );
+  }
+
+  public enterPress() {
+    this.router.navigate(['user', this.user]);
   }
 }
