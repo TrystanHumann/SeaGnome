@@ -18,6 +18,8 @@ import { StreamerSetRequest } from '../models/StreamerSetRequest.model';
 
 export class AdminComponent implements OnInit {
   public authenticated: boolean;
+  public oldPassword: string;
+  public newPassword: string;
   public streamers: Streamer[];
   public streamerOne: string;
   public streamerTwo: string;
@@ -223,5 +225,16 @@ export class AdminComponent implements OnInit {
 
   public toggleColumn(y) {
     this.editColumnId = y;
+  }
+
+  public changePassword() {
+    this.adminservice.changePassword(this.oldPassword, this.newPassword).subscribe(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 }

@@ -56,4 +56,10 @@ export class AdminService {
     // withCredentials should use cookie ?
     return this.http.get(environment.Base_URL + 'auth', { headers: headers, withCredentials: true });
   }
+
+  public changePassword(password, newpassword) {
+    // withCredentials should use cookie ?
+    // tslint:disable-next-line:max-line-length
+    return this.http.post(environment.Base_URL + 'password/change', { oldPassword: btoa(password), newPassword: btoa(newpassword) }, { withCredentials: true });
+  }
 }

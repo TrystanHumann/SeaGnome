@@ -38,17 +38,22 @@ func main() {
 func initAPI(port, connectionString, twitchID string) {
 	db := sqlx.MustConnect("postgres", connectionString)
 
-	http.Handle("/auth", &handlers.Auth{Data: db})
-	http.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
-	http.Handle("/results/upload", &handlers.UploadResults{Data: db})
-	http.Handle("/match", &handlers.Matches{Data: db})
-	http.Handle("/event", &handlers.Events{Data: db})
-	http.Handle("/score", &handlers.Scores{Data: db})
-	http.Handle("/game", &handlers.Games{Data: db})
-	http.Handle("/predictions", &handlers.Predictions{Data: db})
-	http.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
-	http.Handle("/background", &handlers.Background{})
-	http.Handle("/activeevent", &handlers.ActiveEvents{Data: db})
+	routes := http.NewServeMux()
+
+	routes.Handle("/auth", &handlers.Auth{Data: db})
+	routes.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
+	routes.Handle("/results/upload", &handlers.UploadResults{Data: db})
+	routes.Handle("/match", &handlers.Matches{Data: db})
+	routes.Handle("/event", &handlers.Events{Data: db})
+	routes.Handle("/score", &handlers.Scores{Data: db})
+	routes.Handle("/game", &handlers.Games{Data: db})
+	routes.Handle("/predictions", &handlers.Predictions{Data: db})
+	routes.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
+	routes.Handle("/background", &handlers.Background{})
+	routes.Handle("/password/change", &handlers.ChangePassword{Data: db})
+
+	http.Handle("/", &server{routes})
+
 	fmt.Println("Server listening to port: " + port)
 	fmt.Println("Press Ctrl + C to exit.")
 
