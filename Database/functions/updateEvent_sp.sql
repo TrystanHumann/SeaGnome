@@ -1,6 +1,7 @@
--- drop function updateevent_sp(int2, boolean)
-CREATE OR REPLACE FUNCTION updateevent_sp(int2, boolean) RETURNS VOID AS
-$$
+CREATE OR REPLACE FUNCTION public.updateevent_sp(smallint, boolean)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
 declare 
 	idParam int2 = $1;
 	compParam boolean = $2;
@@ -9,8 +10,4 @@ BEGIN
     set complete = compParam
     where id = idParam;
 END
-$$
-  LANGUAGE 'plpgsql';
-
--- select public".updateevent_sp(9::int2, true::boolean)
-
+$function$

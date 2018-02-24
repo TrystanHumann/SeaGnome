@@ -1,6 +1,5 @@
-
 CREATE OR REPLACE FUNCTION public.validatetoken(id bytea, token bytea)
- RETURNS TABLE(valid bool)
+ RETURNS TABLE(valid boolean)
  LANGUAGE sql
 AS $function$
 
@@ -13,4 +12,3 @@ AS $function$
 	  and public.auth.expires > now()
 	
 $function$
-
