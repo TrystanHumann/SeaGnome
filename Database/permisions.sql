@@ -49,3 +49,7 @@ GRANT SELECT ON public.users TO momam ;
 GRANT INSERT ON public.users TO momam ;
 GRANT UPDATE ON public.users TO momam ;
 GRANT DELETE ON public.users TO momam ;
+GRANT SELECT ON public.events TO momam ;
+GRANT INSERT ON public.events TO momam ;
+GRANT UPDATE ON public.events TO momam ;
+GRANT DELETE ON public.events TO momam ;
