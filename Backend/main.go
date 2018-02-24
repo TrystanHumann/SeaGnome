@@ -24,26 +24,26 @@ type server struct {
 
 func main() {
 
-	_, port, connectionString, twitchID, staticDir := parseSettings()
+	env, port, connectionString, twitchID, staticDir := parseSettings()
 
 	db := sqlx.MustConnect("postgres", connectionString)
 
 	routes := http.NewServeMux()
 
-	//if strings.EqualFold(env, "Staging") || strings.EqualFold(env, "Production") {
-	fs := http.FileServer(http.Dir(staticDir))
+	if strings.EqualFold(env, "Staging") || strings.EqualFold(env, "Production") {
+		fs := http.FileServer(http.Dir(staticDir))
 
-	routes.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		pathParts := strings.Split(r.URL.Path, `/`)
-		lastPart := pathParts[len(pathParts)-1]
-		if strings.Contains(lastPart, ".") {
-			fs.ServeHTTP(w, r)
-		} else {
-			path := staticDir + "/index.html"
-			http.ServeFile(w, r, path)
-		}
-	}))
-	//}
+		routes.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			pathParts := strings.Split(r.URL.Path, `/`)
+			lastPart := pathParts[len(pathParts)-1]
+			if strings.Contains(lastPart, ".") {
+				fs.ServeHTTP(w, r)
+			} else {
+				path := staticDir + "/index.html"
+				http.ServeFile(w, r, path)
+			}
+		}))
+	}
 
 	routes.Handle("/auth", &handlers.Auth{Data: db})
 	routes.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
