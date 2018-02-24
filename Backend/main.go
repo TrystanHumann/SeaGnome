@@ -50,6 +50,7 @@ func initAPI(port, connectionString, twitchID string) {
 	routes.Handle("/predictions", &handlers.Predictions{Data: db})
 	routes.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
 	routes.Handle("/background", &handlers.Background{})
+	routes.Handle("/password/change", &handlers.ChangePassword{Data: db})
 
 	http.Handle("/", &server{routes})
 
