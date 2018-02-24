@@ -4,15 +4,14 @@
       <!-- <button type="button" class="btn btn-primary" routerLink="" style="position:absolute;margin:5px 10px;border-radius:5px;">
         <i class="fa fa-arrow-left"></i>
       </button> -->
-      <div style="display:inline;text-align:center;">
-        <button type="button" class="btn btn-primary" routerLink="" style="border-radius:5px;display:inline;margin-left:15px;">
+      <div style="width:100%;">
+        <button type="button" class="btn btn-primary" routerLink="" style="border-radius:5px;display:inline-block;margin-left:15px;
+        vertical-align: middle;">
           <i class="fa fa-arrow-left"></i>
         </button>
-        <h1 style="display:inline;">
-          <span style="margin-right:0px;">Leaderboard
-          </span>
+        <h1 style="display:inline-block;vertical-align:middle;">Leaderboard
         </h1>
-        <label class="switch slider-style">
+        <label class="switch slider-style ">
           <input type="checkbox">
           <span class="slider round"></span>
         </label>
@@ -84,7 +83,7 @@
       </button>
       <hr>
       <div>
-        <h3 style="padding-left:15px;">{{userCard.User}}'s Profile</h3>
+        <h3 style="padding-left:15px;font-size:1.15em">{{userCard.User}}'s Profile</h3>
         <table style="width:100%;">
           <tr>
             <th>Current Raw Score:</th>
@@ -109,8 +108,7 @@
           <table style="width:100%">
             <thead>
               <tr>
-                <th>
-                  <br>Games</th>
+                <th>Games</th>
                 <th>User Prediction</th>
                 <th>Winner</th>
               </tr>
