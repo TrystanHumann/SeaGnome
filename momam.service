@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=momam
-ExecStart=/home/momam/main env:Staging port:443 secrets:.. static:/home/momam/momam/momam
+ExecStart=/home/momam/main env:Staging port:443 secrets:/home/momam static:/home/momam/momam
 Restart=on-failure
 
 [Install]
