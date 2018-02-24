@@ -16,4 +16,4 @@ begin
 	return query
 	select m.id as returnid from public.matches m where m.event = ev and m.game = ga;	
 	--RAISE INFO 'Out variable: %', outUserID;
-end $function$
+end $function$;

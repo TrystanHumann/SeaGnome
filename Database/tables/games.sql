@@ -1,7 +1,8 @@
-CREATE TABLE "public".games (
+CREATE TABLE public.games (
 	id serial NOT NULL,
 	"name" text NOT NULL,
-	PRIMARY KEY (id)
+	CONSTRAINT games_pk PRIMARY KEY (id),
+	CONSTRAINT games_unique_game_name UNIQUE (name)
 )
 WITH (
 	OIDS=FALSE

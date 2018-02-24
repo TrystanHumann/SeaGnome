@@ -1,9 +1,9 @@
 CREATE TABLE public.events (
 	id smallserial NOT NULL,
-	name text NOT NULL,
+	"name" text NOT NULL,
 	complete bool NOT NULL,
-	created_date timestamptz not NULL,
-	active bool not null,
+	created_date timestamptz NOT NULL,
+	active bool NOT NULL,
 	CONSTRAINT events_pkey PRIMARY KEY (id)
 )
 WITH (

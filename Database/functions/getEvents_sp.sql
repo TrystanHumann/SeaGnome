@@ -8,4 +8,4 @@ AS $function$
         from public.events e 
         order by e.created_date desc;
 	end;
-$function$
+$function$;

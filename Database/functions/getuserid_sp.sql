@@ -8,4 +8,4 @@ AS $function$
         from public.users u
         where u.twitchun = "user";
 	end;
-$function$
+$function$;

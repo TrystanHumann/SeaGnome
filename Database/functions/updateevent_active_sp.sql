@@ -14,4 +14,4 @@ BEGIN
     set active = activeParam
     where id = idParam;
 END
-$function$
+$function$;

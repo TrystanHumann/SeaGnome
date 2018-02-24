@@ -8,4 +8,4 @@ set active = $2
 where id = $1
 returning tag
 
- $function$
+ $function$;

@@ -10,4 +10,4 @@ BEGIN
     set complete = compParam
     where id = idParam;
 END
-$function$
+$function$;

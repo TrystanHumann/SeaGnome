@@ -14,4 +14,4 @@ begin
 	return query
 	select p.id as returnid from public.participants p where p."match" = matchid and p.competitor = competitorid;
 	--RAISE INFO 'Out variable: %', outUserID;
-end $function$
+end $function$;

@@ -5,4 +5,4 @@ AS $function$
 begin
 	return query
 	select g.id as returnid from public.games g where g."name" = gamename;
-end $function$
+end $function$;

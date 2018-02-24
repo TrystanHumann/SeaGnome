@@ -11,4 +11,4 @@ AS $function$
 	where public.auth.id = $1
 	  and public.auth.expires > now()
 	
-$function$
+$function$;

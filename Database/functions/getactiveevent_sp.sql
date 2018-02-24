@@ -8,4 +8,4 @@ AS $function$
         from public.events e 
         where e.active = true;
 	end;
-$function$
+$function$;

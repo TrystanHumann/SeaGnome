@@ -17,4 +17,4 @@ AS $function$
 	  on mat.game = gam.id
 	where ((pre."user" = $2) or ($2 = -1))
 	order by mat.scheduled asc
-$function$
+$function$;

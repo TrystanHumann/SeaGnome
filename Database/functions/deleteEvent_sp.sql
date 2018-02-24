@@ -7,4 +7,4 @@ BEGIN
     delete from public.events
     where id = idParam;
 END
-$function$
+$function$;
