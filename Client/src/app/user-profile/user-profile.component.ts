@@ -2,6 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Leaderboard } from '../models/Leaderboard.model';
 import { Nextgames } from '../models/Nextgames.model';
 import { Runner } from '../models/Runner.model';
+import { ActivatedRoute } from '@angular/router';
+import { UserProfileService } from './user-profile.service';
+import { ActiveEventResponse } from '../models/ActiveEventResponse.model';
+import { UserCard } from '../models/UserCard.model';
+import { Prediction } from '../models/Prediction.model';
+import { GameRunners } from '../models/GameRunners.model';
 
 
 @Component({
@@ -11,32 +17,126 @@ import { Runner } from '../models/Runner.model';
 })
 
 export class UserProfileComponent implements OnInit {
+  public user: string;
+  public userCard: UserCard = { User: 'N/A', Total: 0, Percent: 0, LeaderboardPlacement: 0 };
+  public activeEvent: ActiveEventResponse;
 
-  public testLeader = new Array<Leaderboard>(
-    { username: 'FreeCrabs69', score: 4200 }
-    , { username: 'NeverSubNeverDonateGimmie', score: 1337 }
-    , { username: 'FreeCrabs6969', score: 420 }
-    , { username: 'Reb', score: 22 }
-    , { username: 'JohnLee', score: 11 }
-    , { username: 'WonderBoy#1(andrew)', score: 1 }
-    , { username: 'Nick', score: 0 }
-    , { username: 'NeverSubNeverDonateGimmie', score: 1337 }
-    , { username: 'FreeCrabs6969', score: 420 }
-    , { username: 'Reb', score: 22 }
-  );
-  public gamesBoard = new Array<Nextgames>(
-    { title: 'a new crab', favorOnePercent: 69, favorTwoPercent: 420, abstainPercentage: 31 }
-    , { title: 'kill crabs 2 return of the crab', favorOnePercent: 69, favorTwoPercent: 420, abstainPercentage: 31 }
-    , { title: 'jimmy newtrons great adventure', favorOnePercent: 69, favorTwoPercent: 420, abstainPercentage: 31 }
-    , { title: 'Christian the crab revenger', favorOnePercent: 32, favorTwoPercent: 10, abstainPercentage: 11 }
-    , { title: 'The fallen crab killer: Christian, final cut', favorOnePercent: 31, favorTwoPercent: 220, abstainPercentage: 311 }
-  );
-  public RunnerOne: Runner = { username: 'Spikevegeta', score: 21, gamesPlayed: 34 };
-  public RunnerTwo: Runner = { username: 'Iateyourpie', score: 13, gamesPlayed: 34 };
+  public leaderboard = new Array<Leaderboard>();
+  public leaderboardPercent = new Array<Leaderboard>();
+  public gamesBoard = new Array<Nextgames>();
+  public RunnerOne: Runner = { username: '', score: 0, gamesPlayed: 0 };
+  public RunnerTwo: Runner = { username: '', score: 0, gamesPlayed: 0 };
+  public runners = new Array<GameRunners>();
+  public totalresults: Array<{ username: '', won: 0, total: 0 }>;
+  public userPrediction: Array<Prediction>;
+  public leaderFilter: boolean;
 
-  constructor() { }
+  constructor(private activatedRoute: ActivatedRoute, private userProfileService: UserProfileService) { }
 
   ngOnInit() {
+    this.getUserFromRoute();
+    this.getActiveEvent();
+  }
+
+  getActiveEvent() {
+    this.userProfileService.getActiveEvent().subscribe(
+      (res: Array<ActiveEventResponse>) => {
+        if (res != null) {
+          if (res.length > 0) {
+            this.activeEvent = res[0];
+
+            // TESTING REMOVE AND PUT ACTIVE EVENT
+            this.getLeaderboard(45);
+            this.getGames(45);
+            this.getMatchReults(45);
+            this.getPredictions(45, this.user);
+          }
+        }
+      }
+    );
+  }
+
+  getLeaderboard(eventID: number) {
+    this.userProfileService.getLeaderBoard(eventID).subscribe(
+      (res) => {
+        if (res != null) {
+          this.leaderboard = res;
+          // sort by % and fix leaderboard
+          this.leaderboardPercent = this.leaderboard.sort(function (a, b) {
+            if (a.Percent < b.Percent) {
+              return 1;
+            }
+            if (a.Percent > b.Percent) {
+              return -1;
+            }
+            return 0;
+          });
+          this.findUserCard(this.user);
+        }
+      }
+    );
+  }
+  getGames(eventID: number) {
+    this.userProfileService.getGames(eventID).subscribe(
+      (res) => {
+        if (res != null) {
+          this.gamesBoard = res;
+        }
+      }
+    );
+  }
+
+  getPredictions(eventID: number, user: string) {
+    this.userProfileService.getPredictions(eventID, user).subscribe(
+      (res) => {
+        if (res != null) {
+          this.userPrediction = res;
+        }
+      }
+    );
+  }
+
+  getUserFromRoute() {
+    this.activatedRoute.params.subscribe(params => {
+      const user = params['user'];
+      this.user = user;
+    });
+  }
+
+
+  selectUser(user, index: number) {
+    this.user = user;
+    this.getPredictions(45, this.user);
+    this.findUserCard(user);
+  }
+
+  findUserCard(user: string) {
+    const found = this.leaderboard.find(function (element) {
+      return element.User === user;
+    });
+    if (found != null) {
+      this.userCard.User = user;
+      this.userCard.Total = found.Total;
+      this.userCard.Percent = found.Percent;
+      this.userCard.LeaderboardPlacement = this.leaderboard.indexOf(found) + 1;
+    }
+  }
+
+  searchUser() {
+    this.getPredictions(45, this.user);
+    this.findUserCard(this.user);
+  }
+
+  swapLeaderboard() {
+    this.leaderFilter = !this.leaderFilter;
+  }
+
+  getMatchReults(eventID: number) {
+    this.userProfileService.getGamesResult(eventID).subscribe(
+      (res) => {
+        this.runners = res;
+      }
+    );
   }
 
 }

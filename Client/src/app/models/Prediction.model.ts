@@ -1,5 +1,5 @@
 export interface Prediction {
-  title: string;
-  predicted: string;
-  winner: string;
+  Game: string;
+  Prediction: string;
+  Winner: string;
 }
