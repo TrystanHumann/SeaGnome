@@ -134,7 +134,7 @@ export class AdminComponent implements OnInit {
   public activateEvent() {
     this.adminservice.ActivateEvent(this.manageEventsObject.activateEvent).subscribe(
       (res) => {
-        this.eventList = this.eventList.filter((elm) => elm.id !== this.manageEventsObject.activateEvent);
+        
       }
     );
   }
