@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"strconv"
 	"time"
 
 	"encoding/json"
@@ -39,20 +38,15 @@ func (h *ActiveEvents) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	case http.MethodPost:
 		type eventid struct {
-			ID string `json:"eventid"`
+			ID int `json:"eventid"`
 		}
 		event := new(eventid)
 		if err := json.NewDecoder(r.Body).Decode(event); err != nil {
 			http.Error(w, "invalid event id", http.StatusBadRequest)
 			return
 		}
-		id, err := strconv.Atoi(event.ID)
-		if err != nil {
-			http.Error(w, "invalid event id", http.StatusBadRequest)
-			return
-		}
 
-		if err := h.activateEvent(ctx, id); err != nil {
+		if err := h.activateEvent(ctx, event.ID); err != nil {
 			http.Error(w, "failed to activate event, "+err.Error(), http.StatusInternalServerError)
 			return
 		}
