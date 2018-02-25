@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Streamer } from '../models/Streamer.model';
 import { Observable } from 'rxjs/Observable';
@@ -37,9 +37,9 @@ export class AdminService {
   }
 
   public ActivateEvent(eventID: number): Observable<any> {
-    return this.http.delete(`${environment.Base_URL}events?id=${eventID}`);
+    const params = new HttpParams().append("eventid", String(eventID));
+    return this.http.post(`${environment.Base_URL}activeevent`, { params });
   }
-
 
   public uploadExcel(excelFile: FormData, options): any {
     return this.http.put(environment.Base_URL + 'predictions/upload', excelFile, options);
