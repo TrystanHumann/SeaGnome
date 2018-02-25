@@ -24,21 +24,26 @@ type server struct {
 
 func main() {
 
-	port, connectionString, twitchID, mode, staticDir := parseSettings()
+	env, port, connectionString, twitchID, staticDir := parseSettings()
 
-	switch mode {
-	case "api":
-		initAPI(port, connectionString, twitchID)
-	case "file":
-		initFileServer(port, staticDir)
-	}
-
-}
-
-func initAPI(port, connectionString, twitchID string) {
 	db := sqlx.MustConnect("postgres", connectionString)
 
 	routes := http.NewServeMux()
+
+	if strings.EqualFold(env, "Staging") || strings.EqualFold(env, "Production") {
+		fs := http.FileServer(http.Dir(staticDir))
+
+		routes.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			pathParts := strings.Split(r.URL.Path, `/`)
+			lastPart := pathParts[len(pathParts)-1]
+			if strings.Contains(lastPart, ".") {
+				fs.ServeHTTP(w, r)
+			} else {
+				path := staticDir + "/index.html"
+				http.ServeFile(w, r, path)
+			}
+		}))
+	}
 
 	routes.Handle("/auth", &handlers.Auth{Data: db})
 	routes.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
@@ -61,28 +66,7 @@ func initAPI(port, connectionString, twitchID string) {
 	if err := http.ListenAndServe(port, nil); err != nil {
 		fmt.Println(err)
 	}
-}
 
-func initFileServer(port, staticDir string) {
-	fs := http.FileServer(http.Dir(staticDir))
-
-	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		pathParts := strings.Split(r.URL.Path, `/`)
-		lastPart := pathParts[len(pathParts)-1]
-		if strings.Contains(lastPart, ".") {
-			fs.ServeHTTP(w, r)
-		} else {
-			path := staticDir + "/index.html"
-			http.ServeFile(w, r, path)
-		}
-	}))
-
-	fmt.Println("Server listening to port: " + port)
-	fmt.Println("Press Ctrl + C to exit.")
-
-	if err := http.ListenAndServe(port, nil); err != nil {
-		fmt.Println(err)
-	}
 }
 
 func (s *server) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
@@ -104,7 +88,6 @@ func parseSettings() (string, string, string, string, string) {
 		"env":     "",
 		"port":    "",
 		"secrets": "",
-		"mode":    "",
 		"static":  ".",
 	}
 
@@ -130,12 +113,6 @@ func parseSettings() (string, string, string, string, string) {
 			flags[option] = value
 		case "secrets":
 			flags[option] = value
-		case "mode":
-			if value != "api" && value != "file" {
-				fmt.Println("mode must be `api` or `file`")
-			} else {
-				flags[option] = value
-			}
 		case "static":
 			flags[option] = value
 		}
@@ -155,7 +132,7 @@ func parseSettings() (string, string, string, string, string) {
 
 	connString := generateConnectionString(flags["secrets"], flags["env"])
 	twitchID := generateAppSettings(flags["secrets"])
-	return flags["port"], connString, twitchID, flags["mode"], flags["static"]
+	return flags["env"], flags["port"], connString, twitchID, flags["static"]
 }
 
 // generateConnectionString : structures the connection string for the postgres db

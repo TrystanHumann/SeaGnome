@@ -11,7 +11,7 @@ import (
 	"github.com/trystanhumann/SeaGnome/Backend/types"
 )
 
-// Events : Handles Events requests
+// ActiveEvents : Handles Other Events requests? for some reason?
 type ActiveEvents struct {
 	Data *sqlx.DB
 }
@@ -36,10 +36,31 @@ func (h *ActiveEvents) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "unable to to json encode events", http.StatusBadRequest)
 			return
 		}
+	case http.MethodPost:
+		type eventid struct {
+			ID int `json:"eventid"`
+		}
+		event := new(eventid)
+		if err := json.NewDecoder(r.Body).Decode(event); err != nil {
+			http.Error(w, "invalid event id", http.StatusBadRequest)
+			return
+		}
+
+		if err := h.activateEvent(ctx, event.ID); err != nil {
+			http.Error(w, "failed to activate event, "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 	default:
 		http.Error(w, "invalid rest method", http.StatusBadRequest)
 		return
 	}
+}
+
+func (h *ActiveEvents) activateEvent(ctx context.Context, id int) error {
+	query := "select public.updateevent_active_sp($1, $2)"
+	_, err := h.Data.ExecContext(ctx, query, id, true)
+	return err
 }
 
 // getEvents : Get Events by ID

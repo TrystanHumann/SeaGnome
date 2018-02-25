@@ -42,14 +42,15 @@ export class UserProfileComponent implements OnInit {
     this.userProfileService.getActiveEvent().subscribe(
       (res: Array<ActiveEventResponse>) => {
         if (res != null) {
-          if (res.length > 0) {
+          if (res.length > 0 && res[0].id) {
             this.activeEvent = res[0];
 
             // TESTING REMOVE AND PUT ACTIVE EVENT
-            this.getLeaderboard(45);
-            this.getGames(45);
-            this.getMatchReults(45);
-            this.getPredictions(45, this.user);
+            // kk
+            this.getLeaderboard(this.activeEvent.id);
+            this.getGames(this.activeEvent.id);
+            this.getMatchReults(this.activeEvent.id);
+            this.getPredictions(this.activeEvent.id, this.user);
           }
         }
       }
@@ -106,7 +107,7 @@ export class UserProfileComponent implements OnInit {
 
   selectUser(user, index: number) {
     this.user = user;
-    this.getPredictions(45, this.user);
+    this.getPredictions(this.activeEvent.id, this.user);
     this.findUserCard(user);
   }
 
@@ -123,7 +124,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   searchUser() {
-    this.getPredictions(45, this.user);
+    this.getPredictions(this.activeEvent.id, this.user);
     this.findUserCard(this.user);
   }
 
@@ -135,6 +136,15 @@ export class UserProfileComponent implements OnInit {
     this.userProfileService.getGamesResult(eventID).subscribe(
       (res) => {
         this.runners = res;
+        if (this.runners &&  this.runners.length > 2) {
+          this.RunnerOne.username = this.runners[0].Name
+          this.RunnerOne.gamesPlayed = this.runners[0].Matches
+          this.RunnerOne.score = this.runners[0].Wins
+
+          this.RunnerTwo.username = this.runners[1].Name
+          this.RunnerTwo.gamesPlayed = this.runners[1].Matches
+          this.RunnerTwo.score = this.runners[1].Wins
+        }
       }
     );
   }
