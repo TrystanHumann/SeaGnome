@@ -13,7 +13,7 @@ AS $function$
 														     on pred."user" = uses.id
 														   join matches as matc
 															 on part."match" = matc.id
-														   where pred.participant != 29
+														   where pred.participant != 3
 														     and uses.id = users.id
 															 and ((matc.event = $1) or ($1 = -1))
 															 and ((pred."user" = $2) or ($2 = -1)))),2) as percent
@@ -30,4 +30,4 @@ AS $function$
 	group by users.id
 	order by count(preds.id) desc
 
- $function$;
+ $function$
