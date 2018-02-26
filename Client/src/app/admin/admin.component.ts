@@ -175,7 +175,7 @@ export class AdminComponent implements OnInit {
     /** No need to include Content-Type in Angular 4 */
     const params = new HttpParams();
     const options = {
-      headers: new HttpHeaders({ timeout: `${3600000}` }),
+      headers: headers,
       params: params,
       reportProgress: true,
       Timeout: 1000
