@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { AdminService } from './admin.service';
 import { Streamer } from '../models/Streamer.model';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { HttpParams } from '@angular/common/http';
+import { HttpParams, HttpHeaders } from '@angular/common/http';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { EventRequest } from '../models/EventRequest.model';
 import { EventResponse } from '../models/EventResponse.model';
 import { StreamerSetRequest } from '../models/StreamerSetRequest.model';
-
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import { timeout } from 'q';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
@@ -41,7 +42,9 @@ export class AdminComponent implements OnInit {
   public manageEventsObject = { updatePredictions: null, updateEventResults: null, completeEvent: null, deleteEvent: null, activateEvent: null };
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer,
-    private modalService: NgbModal) { }
+    private modalService: NgbModal,
+    private toastsManager: ToastsManager) {
+  }
 
 
   open(content) {
@@ -88,6 +91,11 @@ export class AdminComponent implements OnInit {
     const streamRequest: StreamerSetRequest = { streamerOne: this.streamerOne, streamerTwo: this.streamerTwo };
     this.adminservice.putStreamers(streamRequest).subscribe(
       (res) => {
+        console.log('are you getting here', res);
+        this.toastsManager.success('Streamers have been updated!');
+      },
+      (err) => {
+        this.toastsManager.error('Error updating streamers. Make sure the names are valid twitch streamers.');
       }
     );
   }
@@ -97,6 +105,10 @@ export class AdminComponent implements OnInit {
     this.adminservice.CreateEvent(this.eventRequest).subscribe(
       (res) => {
         this.getEvents();
+        this.toastsManager.success('Event has been created!');
+      },
+      (err) => {
+        this.toastsManager.error('Error creating event.');
       }
     );
   }
@@ -118,6 +130,10 @@ export class AdminComponent implements OnInit {
     this.adminservice.CompeleteEvent(this.manageEventsObject.completeEvent, true).subscribe(
       (res) => {
         this.eventList = this.eventList.filter((elm) => elm.id !== this.manageEventsObject.completeEvent);
+        this.toastsManager.success('Event has been completed!');
+      },
+      (err) => {
+        this.toastsManager.error('Error completing event.');
       }
     );
   }
@@ -126,6 +142,10 @@ export class AdminComponent implements OnInit {
     this.adminservice.DeleteEvent(this.manageEventsObject.deleteEvent).subscribe(
       (res) => {
         this.eventList = this.eventList.filter((elm) => elm.id !== this.manageEventsObject.deleteEvent);
+        this.toastsManager.success('Event has been removed!');
+      },
+      (err) => {
+        this.toastsManager.error('Error removing event.');
       }
     );
 
@@ -134,7 +154,10 @@ export class AdminComponent implements OnInit {
   public activateEvent() {
     this.adminservice.ActivateEvent(this.manageEventsObject.activateEvent).subscribe(
       (res) => {
-        
+        this.toastsManager.success('Event has been activated!');
+      },
+      (err) => {
+        this.toastsManager.error('Error activating event.');
       }
     );
   }
@@ -151,16 +174,20 @@ export class AdminComponent implements OnInit {
     formData.append('eventID', this.manageEventsObject.updatePredictions);
     const headers = new Headers();
     /** No need to include Content-Type in Angular 4 */
-
     const params = new HttpParams();
     const options = {
-      headers: headers,
+      headers: new HttpHeaders({ timeout: `${3600000}` }),
       params: params,
       reportProgress: true,
+      Timeout: 1000
     };
 
     this.adminservice.uploadExcel(formData, options).subscribe(
       (res) => {
+        this.toastsManager.success('Event has been uploaded, leave it 45 minutes to process!', null, { toastLife: 300000 });
+      },
+      (err) => {
+        this.toastsManager.success('Event has been uploaded, leave it 45 minutes to process!', null, { toastLife: 300000 });
       }
     );
   }
@@ -188,6 +215,14 @@ export class AdminComponent implements OnInit {
 
     this.adminservice.uploadResults(formData, options).subscribe(
       (res) => {
+        this.toastsManager.success('Event results have been uploaded!', null, { toastLife: 180000 });
+      },
+      (err) => {
+        if (err.status == 200) {
+          this.toastsManager.success('Results uploaded!');
+        } else {
+          this.toastsManager.error('Error uploading results, please try again.');
+        }
       }
     );
   }
@@ -230,9 +265,14 @@ export class AdminComponent implements OnInit {
   public changePassword() {
     this.adminservice.changePassword(this.oldPassword, this.newPassword).subscribe(
       (res) => {
+        this.toastsManager.success('Password changed!');
       },
       (err) => {
-        console.log(err);
+        if (err.status == 200) {
+          this.toastsManager.success('Password changed!');
+        } else {
+          this.toastsManager.error('Error changing password, please try again.');
+        }
       }
     );
   }

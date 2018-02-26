@@ -29,6 +29,7 @@ export class AdminService {
   }
 
   public CompeleteEvent(eventID: number, completedStatus: boolean): Observable<any> {
+    // tslint:disable-next-line:max-line-length
     return this.http.post(`${environment.Base_URL}events?id=${eventID}&completed=${completedStatus}`, null);
   }
 
@@ -36,15 +37,17 @@ export class AdminService {
     return this.http.delete(`${environment.Base_URL}events?id=${eventID}`);
   }
 
-  public ActivateEvent(eventID: number): Observable<any> {  
-    return this.http.post(`${environment.Base_URL}activeevent`, {eventID});
+  public ActivateEvent(eventID: number): Observable<any> {
+    return this.http.post(`${environment.Base_URL}activeevent`, { eventID });
   }
 
   public uploadExcel(excelFile: FormData, options): any {
+    console.log(options)
     return this.http.put(environment.Base_URL + 'predictions/upload', excelFile, options);
   }
 
   public uploadResults(excelFile: FormData, options): any {
+    console.log(options)
     return this.http.put(environment.Base_URL + 'results/upload', excelFile, options);
   }
   // Address what the return type should be

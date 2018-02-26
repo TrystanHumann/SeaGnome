@@ -68,6 +68,7 @@ p {
   height: 95vh;
   color: black;
   box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+  min-width: 450px;
 }
 
 .sidebar {
@@ -135,7 +136,7 @@ p {
   height: 46.4vh;
   color: black;
   box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
-  min-width: 185px;
+  min-width: 350px;
 }
 
 .extraTwo {
