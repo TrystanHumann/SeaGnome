@@ -109,7 +109,7 @@ func (u *UploadResults) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						if err != nil {
 							fmt.Println(err)
 						}
-						err = u.Data.GetContext(ctx, &matchID, insertMatchQuery, eventID, gamesCache[trimGame(rowData[0])], time.Now(), competitorID[0])
+						err = u.Data.GetContext(ctx, &matchID, insertMatchQuery, eventID, gamesCache[trimGame(rowData[0])], rowData[2], competitorID[0])
 						if err != nil {
 							fmt.Println(err)
 						}
