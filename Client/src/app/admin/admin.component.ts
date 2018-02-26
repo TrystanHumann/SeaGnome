@@ -194,8 +194,7 @@ export class AdminComponent implements OnInit {
 
 
   public authenticateUser() {
-    // console.log(this.authenticated);
-    // this.authenticated = true;
+    
     if (this.Password.trim() !== '' && this.Username.trim() !== '') {
       // Check if user should be authenticated
       this.adminservice.basicAuthenticateUser(this.Username, this.Password).subscribe(res => {
