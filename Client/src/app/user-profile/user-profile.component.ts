@@ -63,7 +63,7 @@ export class UserProfileComponent implements OnInit {
         if (res != null) {
           this.leaderboard = res;
           // sort by % and fix leaderboard
-          this.leaderboardPercent = this.leaderboard.sort(function (a, b) {
+          this.leaderboardPercent = res.sort(function (a, b) {
             if (a.Percent < b.Percent) {
               return 1;
             }
@@ -82,6 +82,8 @@ export class UserProfileComponent implements OnInit {
       (res) => {
         if (res != null) {
           this.gamesBoard = res;
+          this.RunnerOne.username = this.gamesBoard[0].First.Competitor;
+          this.RunnerTwo.username = this.gamesBoard[0].Second.Competitor;
         }
       }
     );
@@ -136,15 +138,6 @@ export class UserProfileComponent implements OnInit {
     this.userProfileService.getGamesResult(eventID).subscribe(
       (res) => {
         this.runners = res;
-        if (this.runners &&  this.runners.length > 2) {
-          this.RunnerOne.username = this.runners[0].Name
-          this.RunnerOne.gamesPlayed = this.runners[0].Matches
-          this.RunnerOne.score = this.runners[0].Wins
-
-          this.RunnerTwo.username = this.runners[1].Name
-          this.RunnerTwo.gamesPlayed = this.runners[1].Matches
-          this.RunnerTwo.score = this.runners[1].Wins
-        }
       }
     );
   }
