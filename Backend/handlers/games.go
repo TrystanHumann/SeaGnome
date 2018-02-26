@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -85,18 +84,15 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 		if predictions[predCount].First.Votes == 0 && !strings.EqualFold(allPredictions[index].Participant, "Skip this") {
 			predictions[predCount].First.Votes = allPredictions[index].Votes
 			predictions[predCount].First.Competitor = allPredictions[index].Participant
-			fmt.Println(predictions[predCount])
 
 			// If the Second amount hasn't been populated and it's not the abstain vote
 		} else if predictions[predCount].Second.Votes == 0 && !strings.EqualFold(allPredictions[index].Participant, "Skip this") {
 			predictions[predCount].Second.Votes = allPredictions[index].Votes
 			predictions[predCount].Second.Competitor = allPredictions[index].Participant
-			fmt.Println(predictions[predCount])
 
 			// If the Abstain vote hasn't been populated and it is the abstain vote
 		} else if predictions[predCount].Abstain == 0 && strings.EqualFold(allPredictions[index].Participant, "Skip this") {
 			predictions[predCount].Abstain = allPredictions[index].Votes
-			fmt.Println(predictions[predCount])
 		}
 	}
 
