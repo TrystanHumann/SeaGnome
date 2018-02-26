@@ -45,6 +45,7 @@ func main() {
 		}))
 	}
 
+	routes.HandleFunc("/.well-known/pki-validation/", sslValidation)
 	routes.Handle("/auth", &handlers.Auth{Data: db})
 	routes.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
 	routes.Handle("/results/upload", &handlers.UploadResults{Data: db})
@@ -66,21 +67,21 @@ func main() {
 	if err := http.ListenAndServe(port, nil); err != nil {
 		fmt.Println(err)
 	}
-
 }
 
-func (s *server) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	if origin := req.Header.Get("Origin"); origin != "" {
-		rw.Header().Set("Access-Control-Allow-Origin", origin)
-		rw.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		rw.Header().Set("Access-Control-Allow-Headers",
+func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+	if origin := r.Header.Get("Origin"); !strings.EqualFold(origin, "") {
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers",
 			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Auth-Token")
 	}
 	// Stop here if its Preflighted OPTIONS request
-	if req.Method == "OPTIONS" {
+	if r.Method == "OPTIONS" {
 		return
 	}
-	s.r.ServeHTTP(rw, req)
+	s.r.ServeHTTP(w, r)
 }
 
 func parseSettings() (string, string, string, string, string) {
@@ -215,4 +216,8 @@ func generateAppSettings(secretsPath string) string {
 	}
 
 	return as.Twitch.TwitchID
+}
+
+func sslValidation(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "/home/momam/F07EAB0AEF8432E5C358640FA9734204.txt")
 }
