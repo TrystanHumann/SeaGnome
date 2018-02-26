@@ -126,6 +126,9 @@ export class UserProfileComponent implements OnInit {
   }
 
   searchUser() {
+    this.user = 'N/A';
+    this.userCard = { User: 'N/A', Total: 0, Percent: 0, LeaderboardPlacement: 0 };
+    this.userPrediction = [];
     this.getPredictions(this.activeEvent.id, this.user);
     this.findUserCard(this.user);
   }
@@ -140,6 +143,10 @@ export class UserProfileComponent implements OnInit {
         this.runners = res;
       }
     );
+  }
+
+  public enterPress() {
+    this.searchUser();
   }
 
 }
