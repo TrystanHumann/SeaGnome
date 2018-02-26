@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import {NgbModule, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import { Component, ViewContainerRef } from '@angular/core';
+import { NgbModule, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { ToastsManager } from 'ng2-toastr';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,8 @@ import {NgbModule, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 
 export class AppComponent {
+  constructor(
+    public toastr: ToastsManager, public vcr: ViewContainerRef) {
+    this.toastr.setRootViewContainerRef(vcr);
+  }
 }

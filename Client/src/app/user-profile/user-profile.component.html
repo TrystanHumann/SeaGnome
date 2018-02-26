@@ -9,7 +9,7 @@
         vertical-align: middle;">
           <i class="fa fa-arrow-left"></i>
         </button>
-        <h1 style="display:inline-block;vertical-align:middle;">Leaderboard
+        <h1 style="display:inline-block;vertical-align:middle;margin-left:35px;">Leaderboard
         </h1>
         <label class="switch slider-style ">
           <input type="checkbox" (click)="this.swapLeaderboard()">
@@ -89,11 +89,11 @@
       </div>
 
     </div>
-    <div class="grid extraTwo" style="overflow-y:hidden;">
+    <div class="grid extraTwo" style="overflow-y:hidden;width:100%">
       <div style="width:100%;height:100%;">
         <h1 style="padding-left:15px">{{user}}'s Predictions</h1>
         <div class="scrollbar" id="scrollbar" style="width:100%;height:80%;background-color:transparent;">
-          <table style="width:100%">
+          <table style="table-layout:fixed;">
             <thead>
               <tr>
                 <th>Games</th>
@@ -103,9 +103,9 @@
             </thead>
             <tbody>
               <tr *ngFor="let prediciton of this.userPrediction ">
-                <td>{{prediciton.Game}}</td>
-                <td style="text-align:left">&emsp;{{prediciton.Prediction}}</td>
-                <td style="text-align:left">&emsp;{{prediciton.Winner}}</td>
+                <td style="overflow:hidden">{{prediciton.Game}}</td>
+                <td style="text-align:left;overflow:hidden">&emsp;{{prediciton.Prediction}}</td>
+                <td style="text-align:left;overflow:hidden">&emsp;{{prediciton.Winner}}</td>
               </tr>
             </tbody>
           </table>
