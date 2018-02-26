@@ -142,8 +142,6 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
-
-			fmt.Println("added a wholeu user ", l, "     ", currentRowSplit)
 		}
 		// Cleaning up buffer memory
 		buffer.Reset()

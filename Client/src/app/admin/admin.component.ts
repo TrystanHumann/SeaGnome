@@ -91,7 +91,6 @@ export class AdminComponent implements OnInit {
     const streamRequest: StreamerSetRequest = { streamerOne: this.streamerOne, streamerTwo: this.streamerTwo };
     this.adminservice.putStreamers(streamRequest).subscribe(
       (res) => {
-        console.log('are you getting here', res);
         this.toastsManager.success('Streamers have been updated!');
       },
       (err) => {
@@ -229,7 +228,6 @@ export class AdminComponent implements OnInit {
 
 
   public authenticateUser() {
-    // console.log(this.authenticated);
     // this.authenticated = true;
     if (this.Password.trim() !== '' && this.Username.trim() !== '') {
       // Check if user should be authenticated

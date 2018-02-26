@@ -42,12 +42,10 @@ export class AdminService {
   }
 
   public uploadExcel(excelFile: FormData, options): any {
-    console.log(options)
     return this.http.put(environment.Base_URL + 'predictions/upload', excelFile, options);
   }
 
   public uploadResults(excelFile: FormData, options): any {
-    console.log(options)
     return this.http.put(environment.Base_URL + 'results/upload', excelFile, options);
   }
   // Address what the return type should be
