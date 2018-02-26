@@ -16,6 +16,6 @@ AS $function$
 	  on mat.game = gam.id
 	where mat.winner is null
 	  and ((mat.event = $1) or $1 = -1)
-	group by com.id, gam."name"
-	order by gam."name"
+	group by com.id, mat.scheduled, gam."name"
+	order by mat.scheduled asc, gam."name"
 $function$
