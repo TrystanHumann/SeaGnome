@@ -62,7 +62,7 @@
     <div class="grid extra">
       <h1 style="padding-left:15px;">User Card</h1>
       <input type="text " name="firstname" [(ngModel)]="user" placeholder="Search Username " style="border-radius:5px;height:30px;border:
-          0;padding-left:5px;width:50%;margin-left:15px;outline-width: 0;outline: none;">
+          0;padding-left:5px;width:50%;margin-left:15px;outline-width: 0;outline: none;" (keyup.enter)="enterPress()">
       <button type="submit" class="btn btn-primary" style="height:30px;padding: 5px 5px;text-align:center;" (click)="searchUser()">
         <i class="fa fa-search"></i>
       </button>
