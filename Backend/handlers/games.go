@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -57,7 +56,7 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 
 	// Get the events presorted by next occurring then most votes
 	if err := g.Data.SelectContext(ctx, &allPredictions, query, event); err != nil {
-		http.Error(w, "failed to retrieve prediction9 counts", http.StatusInternalServerError)
+		http.Error(w, "failed to retrieve prediction counts", http.StatusInternalServerError)
 		return
 	}
 
@@ -96,7 +95,6 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 			predictions[predCount].Abstain = allPredictions[index].Votes
 		}
 	}
-	fmt.Println(predictions)
 
 	json.NewEncoder(w).Encode(predictions)
 }
