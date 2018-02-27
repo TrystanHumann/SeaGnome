@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -56,7 +57,7 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 
 	// Get the events presorted by next occurring then most votes
 	if err := g.Data.SelectContext(ctx, &allPredictions, query, event); err != nil {
-		http.Error(w, "failed to retrieve prediction counts", http.StatusInternalServerError)
+		http.Error(w, "failed to retrieve prediction9 counts", http.StatusInternalServerError)
 		return
 	}
 
@@ -71,12 +72,12 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 		// If the first entry, set the game name
 		if index == 0 {
 			// Set the game name
-			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game})
+			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game, ScheduledDate: allPredictions[index].ScheduledDate})
 
 			// If the next entry, create a new prediction
 		} else if !strings.EqualFold(predictions[predCount].Game, allPredictions[index].Game) {
 			// Set the game name
-			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game})
+			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game, ScheduledDate: allPredictions[index].ScheduledDate})
 			predCount++
 		}
 
@@ -95,6 +96,7 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 			predictions[predCount].Abstain = allPredictions[index].Votes
 		}
 	}
+	fmt.Println(predictions)
 
 	json.NewEncoder(w).Encode(predictions)
 }

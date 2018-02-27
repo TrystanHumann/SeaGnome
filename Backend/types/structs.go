@@ -111,15 +111,17 @@ type Score struct {
 
 // DBPredictionCount : The predictions for a participant in a game.
 type DBPredictionCount struct {
-	Game        string `db:"game"`
-	Participant string `db:"participant"`
-	Votes       int    `db:"votes"`
+	Game          string `db:"game"`
+	Participant   string `db:"participant"`
+	Votes         int    `db:"votes"`
+	ScheduledDate string `db:"scheduled"`
 }
 
 // PredictionCount : The top 3 predictions for up coming games.
 type PredictionCount struct {
-	Game  string
-	First struct {
+	Game          string
+	ScheduledDate string
+	First         struct {
 		Competitor string
 		Votes      int
 	}
