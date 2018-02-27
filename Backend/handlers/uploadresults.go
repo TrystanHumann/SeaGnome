@@ -21,9 +21,7 @@ type UploadResults struct {
 
 // ServeHTTP : Listens for a request and creates a response
 func (u *UploadResults) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// type matchIDInsertResult struct {
-	// 	ID int64 `db:"returnID"`
-	// }
+
 	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*1800000)
 	defer ctxCancel()
 	switch r.Method {
@@ -48,6 +46,17 @@ func (u *UploadResults) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// transfer contents of the file to our buffer
+		io.Copy(&buffer, file)
+		// Determine whether it is prediction or results
+		// Getting the string version of our buffer
+		contents := strings.Split(buffer.String(), "\n")
+
+		if len(contents) < 2 {
+			http.Error(w, "No contents found in CSV", http.StatusBadRequest)
+			return
+		}
+
 		// ID of the event that we will be updating data for
 		eventID := r.FormValue("eventID")
 
@@ -58,65 +67,70 @@ func (u *UploadResults) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// transfer contents of the file to our buffer
-		io.Copy(&buffer, file)
+		const GAMENAME = "Game Name"
+		const WINNER = "Winner"
+		const SCHEDULEDDATE = "Scheduled Date"
 
-		var games []types.Match
-		gamesCache := make(map[string]int)
-		getMatchQuery := "select * from public.getmatchesbyevent($1::int4);"
-		getGameIDQuery := "select * from public.get_gameid_sp($1::text);"
-		getCompetitorQuery := "select * from public.get_competitorid_sp($1::text);"
+		var games []types.MatchesForResults
+		gameCache := make(map[string]int)
+		compCache := make(map[int]map[string]int)
+		cols := make(map[string]int)
+
+		getMatchQuery := "select * from public.getmatchesbyeventforresults($1::int4);"
 		insertMatchQuery := "select * from public.insert_match_sp($1::int4,$2::int4,$3::timestamp,$4::int4)"
+
 		err = u.Data.SelectContext(ctx, &games, getMatchQuery, eventID)
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		//sent games get gameID
-		for _, game := range games {
-			var gameID []int
-			err = u.Data.SelectContext(ctx, &gameID, getGameIDQuery, game.Game)
+		for index := range games {
+			gameCache[games[index].Game] = games[index].GameID
+			compMap, ok := compCache[gameCache[games[index].Game]]
+			if !ok {
+				compMap = make(map[string]int)
+				compCache[gameCache[games[index].Game]] = compMap
+			}
+			compMap[games[index].Competitor] = games[index].CompetitorID
+		}
+
+		firstRow := strings.Split(contents[0], ",")
+		for i := range firstRow {
+			if strings.EqualFold(GAMENAME, firstRow[i]) {
+				cols[GAMENAME] = i
+			} else if strings.EqualFold(WINNER, firstRow[i]) {
+				cols[WINNER] = i
+			} else if strings.EqualFold(SCHEDULEDDATE, firstRow[i]) {
+				cols[SCHEDULEDDATE] = i
+			}
+		}
+
+		if len(cols) < 3 {
+			http.Error(w, "invalid upload format", http.StatusBadRequest)
+		}
+
+		for index := 1; index < len(contents); index++ {
+			// split by commas and begin extracting the values
+			rowData := strings.Split(contents[index], ",")
+			game := trimGame(rowData[cols[GAMENAME]])
+			gameID := gameCache[game]
+
+			if gameID == 0 {
+				fmt.Println("game not found during results upload: " + game)
+				continue
+			}
+
+			_, err = u.Data.ExecContext(ctx, insertMatchQuery,
+				eventID, // event id
+				gameID,  // game name
+				rowData[cols[SCHEDULEDDATE]],             // schedule date
+				compCache[gameID][rowData[cols[WINNER]]]) // winner id
+
 			if err != nil {
 				fmt.Println(err)
 			}
-			if len(gameID) != 0 {
-				gamesCache[strings.Trim(game.Game, " ")] = gameID[0]
-			}
-
 		}
 
-		// Determine whether it is prediction or results
-		// Getting the string version of our buffer
-		contents := strings.Split(buffer.String(), "\n")
-
-		if len(contents) <= 0 {
-			http.Error(w, "No contents found in CSV", http.StatusBadRequest)
-			return
-		}
-		firstRow := strings.Split(contents[0], ",")
-		for l, data := range contents {
-			// split by commas and begin extracting the values
-			rowData := strings.Split(data, ",")
-			if l != 0 {
-				for i, col := range rowData {
-					if firstRow[i] == "Winner" {
-						var competitorID []int
-						var matchID int
-						if len(col) == 0 {
-							continue
-						}
-						err := u.Data.SelectContext(ctx, &competitorID, getCompetitorQuery, col)
-						if err != nil {
-							fmt.Println(err)
-						}
-						err = u.Data.GetContext(ctx, &matchID, insertMatchQuery, eventID, gamesCache[trimGame(rowData[0])], rowData[2], competitorID[0])
-						if err != nil {
-							fmt.Println(err)
-						}
-					}
-				}
-			}
-		}
 		// Cleaning up buffer memory
 		buffer.Reset()
 		w.Write([]byte("Yes"))

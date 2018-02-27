@@ -59,6 +59,15 @@ type Match struct {
 	Game string `db:"game"`
 }
 
+// MatchesForResults : Matches that are used for uploading results
+type MatchesForResults struct {
+	ID           int    `db:"id"`
+	GameID       int    `db:"gameid"`
+	Game         string `db:"game"`
+	CompetitorID int    `db:"competitorid"`
+	Competitor   string `db:"competitor"`
+}
+
 // Competitor : A competitor or a match
 type Competitor struct {
 	ID   int    `db:"id"`
