@@ -126,7 +126,6 @@ export class UserProfileComponent implements OnInit {
       this.userCard.Percent = found.Percent;
       this.userCard.LeaderboardPlacement = this.leaderboard.indexOf(found) + 1;
     } else {
-      this.user = 'N/A';
       this.userCard = { User: 'N/A', Total: 0, Percent: 0, LeaderboardPlacement: 0 };
       this.userPrediction = [];
     }
