@@ -1,8 +1,8 @@
 CREATE OR REPLACE FUNCTION public.getfuturepredictions(event integer)
- RETURNS TABLE(game text, participant text, votes bigint)
+ RETURNS TABLE(game text, participant text, votes bigint, scheduled text)
  LANGUAGE sql
 AS $function$
-	select trim(gam."name") as game, trim(com."name") as participant, count(com.id) as votes
+	select trim(gam."name") as game, trim(com."name") as participant, count(com.id) as votes, to_char(mat.scheduled, 'DD Mon')
 	from public.predictions as pre
 	join public.users as use
 	  on pre."user" = use.id
@@ -17,5 +17,5 @@ AS $function$
 	where mat.winner is null
 	  and ((mat.event = $1) or $1 = -1)
 	group by com.id, gam."name", mat.scheduled
-	order by mat.scheduled asc, com.id desc
+	order by mat.scheduled, gam."name"
 $function$;
