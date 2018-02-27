@@ -12,7 +12,7 @@ begin
 		event = ev,
 		game = ga, 
 		scheduled = coalesce(sch, (select scheduled from public.matches where event = ev and game = ga)),
-		winner = coalesce(win, (select winner from public.matches where event = ev and game = ga));
+		winner = coalesce(nullif(win, 0), (select winner from public.matches where event = ev and game = ga));
 	return query
 	select m.id as returnid from public.matches m where m.event = ev and m.game = ga;	
 	--RAISE INFO 'Out variable: %', outUserID;

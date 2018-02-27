@@ -45,7 +45,6 @@ func main() {
 		}))
 	}
 
-	routes.HandleFunc("/.well-known/pki-validation/", sslValidation)
 	routes.Handle("/auth", &handlers.Auth{Data: db})
 	routes.Handle("/predictions/upload", &handlers.UploadPredictions{Data: db})
 	routes.Handle("/results/upload", &handlers.UploadResults{Data: db})
@@ -216,8 +215,4 @@ func generateAppSettings(secretsPath string) string {
 	}
 
 	return as.Twitch.TwitchID
-}
-
-func sslValidation(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "/home/momam/F07EAB0AEF8432E5C358640FA9734204.txt")
 }
