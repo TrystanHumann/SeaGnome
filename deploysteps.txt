@@ -1,0 +1,22 @@
+1. run ./prodbuild.sh from the root directroy (the directory this file is in)
+2. after the build is complete go to the remote server
+3. run systemctl stop momam ----- THIS BRINGS DOWN THE SITE, SO TIME IS OFF THE ESSENCE
+        recommended you have steps 4, 5, and 6 prepped
+4. come back to your local terminal (opened in this directory)
+5. run ./push
+   * ./push accepts two arguments.
+     a. The IP address of the server to push to
+     b. The password to the momam account on the server
+
+6. after all the files have been pushed to the server copy the commands in the setserver.sh file
+7. go to the remote server and right click (or paste) the lines of code and hit enter
+
+if successful, the "Active:" row will say "active (running)" 
+
+to see logs run the command:
+journalctl -u momam
+
+to see logs from a certain date/time (more useful) run:
+journalctl -u momam --since '2018-02-27 03:46:00'
+
+times are in UTC
