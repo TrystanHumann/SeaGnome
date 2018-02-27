@@ -71,12 +71,12 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 		// If the first entry, set the game name
 		if index == 0 {
 			// Set the game name
-			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game})
+			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game, ScheduledDate: allPredictions[index].ScheduledDate})
 
 			// If the next entry, create a new prediction
 		} else if !strings.EqualFold(predictions[predCount].Game, allPredictions[index].Game) {
 			// Set the game name
-			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game})
+			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game, ScheduledDate: allPredictions[index].ScheduledDate})
 			predCount++
 		}
 
