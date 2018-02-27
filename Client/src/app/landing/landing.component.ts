@@ -14,10 +14,11 @@ import { Router } from '@angular/router';
 export class LandingComponent implements OnInit {
   public streamers: Streamer[];
   public trustedUrl: Array<SafeUrl> = [];
+  public trustedUrlChat: Array<SafeUrl> = [];
   public user: string;
 
   constructor(public adminservice: AdminService,
-    private sanitizer: DomSanitizer , private router: Router) { }
+    private sanitizer: DomSanitizer, private router: Router) { }
 
   ngOnInit() {
     this.setStreamers();
@@ -32,6 +33,11 @@ export class LandingComponent implements OnInit {
         streamers.forEach(streamer => {
           // tslint:disable-next-line:max-line-length
           this.trustedUrl.push(this.sanitizer.bypassSecurityTrustResourceUrl('http://player.twitch.tv/?channel=' + streamer.tag + '&muted=true'));
+        });
+
+        streamers.forEach(streamer => {
+          // tslint:disable-next-line:max-line-length
+          this.trustedUrlChat.push(this.sanitizer.bypassSecurityTrustResourceUrl('http://www.twitch.tv/' + streamer.tag + '/chat?darkpopout'));
         });
       }
     );
