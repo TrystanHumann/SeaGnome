@@ -9,5 +9,6 @@ export interface Nextgames {
     Competitor: string,
     Votes: number,
   };
+  ScheduledDate: string;
 }
 

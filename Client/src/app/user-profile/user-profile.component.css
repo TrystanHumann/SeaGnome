@@ -299,7 +299,11 @@ input:checked+.slider:before {
   }
   .hero {
     height: 500px;
+    min-width: 0px;
     overflow-y: hidden;
+  }
+  .makeSmallOnResize {
+    font-size: 24px;
   }
   .extra {
     grid-column-start: 1;
