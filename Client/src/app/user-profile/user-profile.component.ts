@@ -95,6 +95,9 @@ export class UserProfileComponent implements OnInit {
         if (res != null) {
           this.userPrediction = res;
         }
+      },
+      (err) => {
+        this.userPrediction = [];
       }
     );
   }
@@ -115,19 +118,21 @@ export class UserProfileComponent implements OnInit {
 
   findUserCard(user: string) {
     const found = this.leaderboard.find(function (element) {
-      return element.User === user;
+      return element.User.toLowerCase() === user.toLowerCase();
     });
     if (found != null) {
       this.userCard.User = user;
       this.userCard.Total = found.Total;
       this.userCard.Percent = found.Percent;
       this.userCard.LeaderboardPlacement = this.leaderboard.indexOf(found) + 1;
+    } else {
+      this.user = 'N/A';
+      this.userCard = { User: 'N/A', Total: 0, Percent: 0, LeaderboardPlacement: 0 };
+      this.userPrediction = [];
     }
   }
 
   searchUser() {
-    this.userCard = { User: 'N/A', Total: 0, Percent: 0, LeaderboardPlacement: 0 };
-    this.userPrediction = [];
     this.getPredictions(this.activeEvent.id, this.user);
     this.findUserCard(this.user);
   }
