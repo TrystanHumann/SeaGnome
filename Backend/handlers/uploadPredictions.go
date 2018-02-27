@@ -158,8 +158,8 @@ func getGames(row []string) ([]string, []string) {
 		col = strings.Replace(col, "\"", "", -1)
 		if strings.Contains(col, "Predictions") {
 			col = strings.Replace(col, "Predictions [", "", -1)
-			col = strings.Trim(col, " ")
 			col = strings.Replace(col, "]", "", -1)
+			col = strings.TrimSpace(col)
 			games = append(games, col)
 		}
 		row[i] = col
