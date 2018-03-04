@@ -3,31 +3,39 @@ CREATE OR REPLACE FUNCTION public.getuserscore(event integer, usr integer)
  LANGUAGE sql
 AS $function$
 
-	select users.twitchun
-	     , count(preds.id) as correct
-	     , round(100 * (cast (count(preds.id) as numeric)/(select count(matc.id)
-			                                               from predictions as pred
-														   join participants as part
-															 on pred.participant = part.id
-														   join users as uses
-														     on pred."user" = uses.id
-														   join matches as matc
-															 on part."match" = matc.id
-														   where pred.participant != 29
-														     and uses.id = users.id
-															 and ((matc.event = $1) or ($1 = -1))
-															 and ((pred."user" = $2) or ($2 = -1)))),2) as percent
-	from public.predictions as preds
-	join public.participants as parts
-	  on preds.participant = parts.id
-	join public.users       as users
-	  on preds."user" = users.id
-	join public.matches     as maths
-	  on parts."match" = maths.id
-	where parts.competitor = maths.winner
-	  and ((maths.event = $1) or ($1 = -1))
-	  and ((preds."user" = $2) or ($2 = -1))
-	group by users.id
-	order by count(preds.id) desc
+select "count".un as "user"
+     , sum("count".correct) as total
+     , case
+         when sum("count".nonAbstained) = 0 then 0.00
+         else round(100.00 * 
+                     cast(sum("count".correct) as numeric) /
+                     cast(sum("count".nonAbstained) as numeric),2)
+       end as percent
+from(
+select us.twitchun as un
+     , case 
+         when co.id = ma.winner
+           then 1
+         else 0 
+       end as correct
+     , case
+         when ma.winner is not null and co.id != 3
+           then 1
+         else 0
+       end as nonAbstained
+from public.predictions as pr
+join public.participants as pa
+  on pr.participant = pa.id
+join public.users as us
+  on pr."user" = us.id
+join public.competitors as co
+  on pa.competitor = co.id
+join public.matches as ma
+  on pa."match" = ma.id
+ and ((ma.event = $1) or ($1 = -1))
+where ((pr."user" = $2) or ($2 = -1))
+) as "count"
+group by "count".un
+order by total desc, percent desc, "count".un asc
 
- $function$;
+ $function$

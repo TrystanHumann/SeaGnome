@@ -1,6 +1,7 @@
 package types
 
 import (
+	sql "database/sql"
 	"time"
 
 	"github.com/rs/xid"
@@ -111,10 +112,10 @@ type Score struct {
 
 // DBPredictionCount : The predictions for a participant in a game.
 type DBPredictionCount struct {
-	Game          string `db:"game"`
-	Participant   string `db:"participant"`
-	Votes         int    `db:"votes"`
-	ScheduledDate string `db:"scheduled"`
+	Game          string         `db:"game"`
+	Participant   string         `db:"participant"`
+	Votes         int            `db:"votes"`
+	ScheduledDate sql.NullString `db:"scheduled"`
 }
 
 // PredictionCount : The top 3 predictions for up coming games.

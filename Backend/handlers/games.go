@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -59,7 +60,6 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 		http.Error(w, "failed to retrieve prediction counts", http.StatusInternalServerError)
 		return
 	}
-
 	// If no future games for the event return no content
 	if len(allPredictions) < 1 {
 		w.WriteHeader(http.StatusNoContent)
@@ -71,12 +71,22 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 		// If the first entry, set the game name
 		if index == 0 {
 			// Set the game name
-			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game, ScheduledDate: allPredictions[index].ScheduledDate})
+			schDate, err := allPredictions[index].ScheduledDate.Value()
+			if err != nil || schDate == "" || schDate == nil {
+				fmt.Println(err)
+				schDate = "31 TBA"
+			}
+			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game, ScheduledDate: schDate.(string)})
 
 			// If the next entry, create a new prediction
 		} else if !strings.EqualFold(predictions[predCount].Game, allPredictions[index].Game) {
 			// Set the game name
-			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game, ScheduledDate: allPredictions[index].ScheduledDate})
+			schDate, err := allPredictions[index].ScheduledDate.Value()
+			if err != nil || schDate == "" || schDate == nil {
+				fmt.Println(err)
+				schDate = "31 TBA"
+			}
+			predictions = append(predictions, types.PredictionCount{Game: allPredictions[index].Game, ScheduledDate: schDate.(string)})
 			predCount++
 		}
 

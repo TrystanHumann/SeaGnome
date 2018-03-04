@@ -118,6 +118,9 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					if colIndex < len(columnNames) {
 						if strings.Contains(columnNames[colIndex], "Predictions") {
 							if competitorCache[column] == 0 {
+								if column == "" {
+									column = "Skip this"
+								}
 								err := u.Data.GetContext(ctx, &competitorID, insertCompetitorQuery, column)
 								if err != nil {
 									fmt.Println(err)
