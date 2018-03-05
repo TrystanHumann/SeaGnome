@@ -22,7 +22,7 @@ export class UserProfileComponent implements OnInit {
   public activeEvent: ActiveEventResponse;
 
   public leaderboard = new Array<Leaderboard>();
-  public leaderboardPercent = new Array<Leaderboard>();
+  public leaderPercent = new Array<Leaderboard>();
   public gamesBoard = new Array<Nextgames>();
   public RunnerOne: Runner = { username: '', score: 0, gamesPlayed: 0 };
   public RunnerTwo: Runner = { username: '', score: 0, gamesPlayed: 0 };
@@ -62,8 +62,9 @@ export class UserProfileComponent implements OnInit {
       (res) => {
         if (res != null) {
           this.leaderboard = res;
+          this.leaderPercent = res.slice(0);
           // sort by % and fix leaderboard
-          this.leaderboardPercent = res.sort(function (a, b) {
+          this.leaderPercent = this.leaderPercent.sort(function (a, b) {
             if (a.Percent < b.Percent) {
               return 1;
             }
