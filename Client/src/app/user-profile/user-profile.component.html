@@ -148,7 +148,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="userhover" *ngFor=" let user of this.leaderboardPercent; let i=index " (click)="selectUser(user.User, i)">
+        <tr class="userhover" *ngFor=" let user of this.leaderPercent; let i=index " (click)="selectUser(user.User, i)">
           <td class="columnPlace" style="text-align:left;padding-left:10px;">&#32;{{i + 1}}</td>
           <td class="columnPlace">{{user.User}}
           </td>
