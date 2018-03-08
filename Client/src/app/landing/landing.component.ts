@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Streamer } from '../models/Streamer.model';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { AdminService } from '../admin/admin.service';
-import { RouterLink } from '@angular/router';
+import { RouterLink, NavigationEnd } from '@angular/router';
 import { Router } from '@angular/router';
+
+declare var ga: Function;
 
 
 @Component({
@@ -16,9 +18,16 @@ export class LandingComponent implements OnInit {
   public trustedUrl: Array<SafeUrl> = [];
   public trustedUrlChat: Array<SafeUrl> = [];
   public user: string;
-
+  public ga: any;
   constructor(public adminservice: AdminService,
-    private sanitizer: DomSanitizer, private router: Router) { }
+    private sanitizer: DomSanitizer, private router: Router) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        ga('set', 'page', event.urlAfterRedirects);
+        ga('send', 'pageview');
+      }
+    });
+  }
 
   ngOnInit() {
     this.setStreamers();
