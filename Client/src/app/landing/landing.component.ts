@@ -61,8 +61,15 @@ export class LandingComponent implements OnInit {
   }
 
   public setsingleStreamerDisplay(streamer : string): void {
-    console.log(streamer);
     this.singleStreamerDisplay = streamer;
+  }
+
+  public getSingleStreamerStreamChannelURL(): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`https://player.twitch.tv/?channel=${this.singleStreamerDisplay}`);
+  }
+
+  public getSingleStreamerChatURL(): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`http://www.twitch.tv/embed/${this.singleStreamerDisplay}/chat`);
   }
   
   public enterPress() {
