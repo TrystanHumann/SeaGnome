@@ -1,18 +1,16 @@
 <div class="container fullscreen">
-  <div class="twitch-screen">
-
-    <iframe *ngFor="let streamer of trustedUrl" class="hideOnSmallScreen" style="padding-left:50px;" [src]="streamer" height="50%"
-      width="48%" frameborder="0" scrolling="no" allowfullscreen="true">
-    </iframe>
-    <iframe  *ngFor="let streamerChat of trustedUrlChat" class="hideOnSmallScreen" style="padding-left:50px;"frameborder="0" scrolling="no" id="chat_embed" [src]="streamerChat" height="50%"
-    width="48%">
-  </iframe>
-  <!-- <button *ngFor="let name of streamerNames" style="margin-left:50px;"  class="btn btn-primary">View {{name | titlecase}}</button> -->
-  <ng-template ngFor let-name [ngForOf]="streamerNames" let-i="index">
-    <button [ngStyle] = "{'margin-left': '4%', 'width': '44%'}" class="btn btn-primary">View {{name | titlecase}}</button>
-  </ng-template>
+  <div class="twitch-screen" *ngIf = "singleStreamerDisplay === null || singleStreamerDisplay === undefined; else showSingleStreamer">
+      <iframe *ngFor="let streamer of trustedUrl" class="hideOnSmallScreen" style="padding-left:50px;" [src]="streamer" height="50%"
+        width="48%" frameborder="0" scrolling="no" allowfullscreen="true">
+      </iframe>
+      <iframe *ngFor="let streamerChat of trustedUrlChat" class="hideOnSmallScreen" style="padding-left:50px;" frameborder="0"
+        scrolling="no" id="chat_embed" [src]="streamerChat" height="50%" width="48%">
+      </iframe>
+      <!-- <button *ngFor="let name of streamerNames" style="margin-left:50px;"  class="btn btn-primary">View {{name | titlecase}}</button> -->
+      <ng-template ngFor let-name [ngForOf]="streamerNames" let-i="index">
+        <button [ngStyle]="{'margin-left': '4%', 'width': '44%'}" class="btn btn-primary" (click)="setsingleStreamerDisplay(name);">View {{name | titlecase}}</button>
+      </ng-template>
   </div>
-
   <div class="fillUp">
 
     <div class="centerStuff">
@@ -21,14 +19,13 @@
           MOMAM Prediction Leaderboard
         </h1>
       </div>
-      <input class="colorful" type="search" [(ngModel)]="user" value="doodo" placeholder="Search user" (keyup.enter)="enterPress()"
-      />
+      <input class="colorful" type="search" [(ngModel)]="user" value="doodo" placeholder="Search user" (keyup.enter)="enterPress()"/>
       <div class="buttonContainer">
         <a href="https://www.streambig.net/momam3.html">
-          <button class="btn btn-primary"style="margin:3px 3px;" type="submit">What is MOMAM?</button>
+          <button class="btn btn-primary" style="margin:3px 3px;" type="submit">What is MOMAM?</button>
         </a>
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSc62kU4IHJhMna2FZesS1qqO6U8tvHNg0AX1MvqTYJKKRK6sg/viewform">
-          <button class="btn btn-primary"style="margin:3px 3px;" type="submit">Make your prediction!</button>
+          <button class="btn btn-primary" style="margin:3px 3px;" type="submit">Make your prediction!</button>
         </a>
         <button class="btn btn-primary moveOnResize" style="margin:3px 3px;" type="submit" routerLink="/user/user">Leaderboard</button>
         <button class="btn btn-primary" style="margin:3px 3px;" type="submit" routerLink="/user/{{user}}">Search</button>
@@ -44,3 +41,7 @@
     </div>
   </div>
 </div>
+
+<ng-template #showSingleStreamer>
+    <button [ngStyle]="{'margin-left': '4%', 'width': '44%'}" class="btn btn-primary" (click)="setsingleStreamerDisplay(null);">Previous View</button>
+</ng-template>

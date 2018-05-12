@@ -19,6 +19,7 @@ export class LandingComponent implements OnInit {
   public trustedUrlChat: Array<SafeUrl> = [];
   public streamerNames: Array<string> = [];
   public user: string;
+  public singleStreamerDisplay;
   public ga: any;
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer, private router: Router) {
@@ -31,6 +32,7 @@ export class LandingComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.singleStreamerDisplay = null;
     this.setStreamers();
   }
 
@@ -56,6 +58,11 @@ export class LandingComponent implements OnInit {
         });
       }
     );
+  }
+
+  public setsingleStreamerDisplay(streamer : string): void {
+    console.log(streamer);
+    this.singleStreamerDisplay = streamer;
   }
   
   public enterPress() {
