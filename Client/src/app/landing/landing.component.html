@@ -7,7 +7,10 @@
     <iframe  *ngFor="let streamerChat of trustedUrlChat" class="hideOnSmallScreen" style="padding-left:50px;"frameborder="0" scrolling="no" id="chat_embed" [src]="streamerChat" height="50%"
     width="48%">
   </iframe>
-
+  <!-- <button *ngFor="let name of streamerNames" style="margin-left:50px;"  class="btn btn-primary">View {{name | titlecase}}</button> -->
+  <ng-template ngFor let-name [ngForOf]="streamerNames" let-i="index">
+    <button [ngStyle] = "{'margin-left': '4%', 'width': '44%'}" class="btn btn-primary">View {{name | titlecase}}</button>
+  </ng-template>
   </div>
 
   <div class="fillUp">
