@@ -54,3 +54,7 @@ GRANT SELECT ON public.events TO momam ;
 GRANT INSERT ON public.events TO momam ;
 GRANT UPDATE ON public.events TO momam ;
 GRANT DELETE ON public.events TO momam ;
+GRANT INSERT ON public.button_colors TO momam ;
+GRANT UPDATE ON public.button_colors TO momam ;
+GRANT DELETE ON public.button_colors TO momam ;
+GRANT TRUNCATE ON public.button_colors TO momam ;
