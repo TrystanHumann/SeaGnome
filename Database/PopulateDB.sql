@@ -176,12 +176,14 @@ CREATE UNIQUE INDEX streamers_id_idx ON streamers USING btree (id) ;
 drop table if exists public.button_colors;
 CREATE TABLE "public".button_colors (
 	button_guid uuid NOT NULL,
-	hex_color varchar(7) NOT NULL
+	hex_color varchar(7) NOT NULL,
+	PRIMARY KEY (button_guid),
+	UNIQUE (button_guid)
 )
 WITH (
 	OIDS=FALSE
 ) ;
-COMMENT ON TABLE "public".button_colors IS 'Table used to store button color' ;
+
 
 
 ---------------- FUNCTIONS ----------------
@@ -665,7 +667,7 @@ AS $function$
 $function$;
 
 -- Fetch button colors
-CREATE OR REPLACE FUNCTION public.get_button_color(uuid = null)
+CREATE OR REPLACE FUNCTION public.get_button_colors(uuid = null)
  RETURNS TABLE(b_guid uuid, hex_code varchar)
  LANGUAGE plpgsql
 AS $function$
@@ -690,7 +692,7 @@ declare guid uuid = $1;
 declare hex_code varchar = $2;
 BEGIN
 	insert into public.button_colors(button_guid, hex_color)
-	values (guid, hex_code) on conflict(guid) 
+	values (guid, hex_code) on conflict(button_guid) 
 	do update
 	set
 	button_guid = guid,

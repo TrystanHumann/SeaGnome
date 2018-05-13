@@ -57,6 +57,7 @@ func main() {
 	routes.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
 	routes.Handle("/background", &handlers.Background{})
 	routes.Handle("/password/change", &handlers.ChangePassword{Data: db})
+	routes.Handle("/buttoncolor", &handlers.ButtonColor{Data: db})
 
 	http.Handle("/", &server{routes})
 
