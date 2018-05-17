@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/TrystanHumann/SeaGnome/Backend/utils"
@@ -38,13 +39,28 @@ func (b *BackgroundUpload) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		var buffer bytes.Buffer
 
 		// fetching image from formFile
-		file, _, err := r.FormFile("img")
+		file, header, err := r.FormFile("img")
 
 		if err != nil {
 			http.Error(w, "unable to get image from form file", http.StatusInternalServerError)
 			return
 		}
 		defer file.Close()
+
+		// checking to be sure its a png file
+		name := header.Filename
+
+		splitName := strings.Split(name, ".")
+
+		if len(splitName) <= 0 {
+			http.Error(w, "unable to retrieve form file type", http.StatusInternalServerError)
+			return
+		}
+
+		if splitName[len(splitName)-1] != "png" {
+			http.Error(w, "invalid file type in form", http.StatusInternalServerError)
+			return
+		}
 
 		// copy current background image to archive folder with timestamp in nanoseconds
 		err = utils.Copy(path.Join(b.FilePath, "background.png"), path.Join(b.FilePath, "archive", fmt.Sprintf("background-%v.png", (time.Now().UnixNano()/1000000))))
