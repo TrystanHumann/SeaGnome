@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { EventRequest } from '../models/EventRequest.model';
 import { EventResponse } from '../models/EventResponse.model';
 import { StreamerSetRequest } from '../models/StreamerSetRequest.model';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class AdminService {
@@ -68,5 +69,10 @@ export class AdminService {
     // withCredentials should use cookie ?
     // tslint:disable-next-line:max-line-length
     return this.http.post(this.baseurl + 'password/change', { oldPassword: btoa(password), newPassword: btoa(newpassword) }, { withCredentials: true });
+  }
+
+
+  public uploadBackground(background: FormData, options): any {
+    return this.http.put(this.baseurl + 'background/upload', background, options);
   }
 }
