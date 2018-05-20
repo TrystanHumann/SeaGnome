@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/trystanhumann/SeaGnome/Backend/types"
 	// driver for postgres connections
 	_ "github.com/lib/pq"
 
@@ -24,7 +25,9 @@ type server struct {
 
 func main() {
 
-	env, port, connectionString, twitchID, staticDir := parseSettings()
+	env, port, connectionString, appSettings, staticDir := parseSettings()
+
+	twitchID := appSettings.Twitch.TwitchID
 
 	db := sqlx.MustConnect("postgres", connectionString)
 
@@ -55,9 +58,9 @@ func main() {
 	routes.Handle("/game", &handlers.Games{Data: db})
 	routes.Handle("/predictions", &handlers.Predictions{Data: db})
 	routes.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
-	routes.Handle("/background", &handlers.Background{})
 	routes.Handle("/password/change", &handlers.ChangePassword{Data: db})
 	routes.Handle("/buttonstyle", &handlers.ButtonStyle{Data: db})
+	routes.Handle("/background/upload", &handlers.BackgroundUpload{FilePath: appSettings.BackgroundPath})
 
 	http.Handle("/", &server{routes})
 
@@ -84,7 +87,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.r.ServeHTTP(w, r)
 }
 
-func parseSettings() (string, string, string, string, string) {
+func parseSettings() (string, string, string, types.AppSettings, string) {
 	flags := map[string]string{
 		"env":     "",
 		"port":    "",
@@ -132,8 +135,8 @@ func parseSettings() (string, string, string, string, string) {
 	}
 
 	connString := generateConnectionString(flags["secrets"], flags["env"])
-	twitchID := generateAppSettings(flags["secrets"])
-	return flags["env"], flags["port"], connString, twitchID, flags["static"]
+	appSettings := generateAppSettings(flags["secrets"])
+	return flags["env"], flags["port"], connString, appSettings, flags["static"]
 }
 
 // generateConnectionString : structures the connection string for the postgres db
@@ -195,15 +198,9 @@ func generateConnectionString(secretsPath, env string) string {
 	return connectionString
 }
 
-func generateAppSettings(secretsPath string) string {
-	type appSettings struct {
-		Twitch struct {
-			TwitchID     string `json:"TwitchID"`
-			TwitchSecret string `json:"TwitchSecret"`
-		} `json:"Twitch"`
-	}
+func generateAppSettings(secretsPath string) types.AppSettings {
 
-	as := new(appSettings)
+	as := new(types.AppSettings)
 
 	raw, err := ioutil.ReadFile(path.Join(secretsPath, "appsettings.json"))
 	if err != nil {
@@ -215,5 +212,5 @@ func generateAppSettings(secretsPath string) string {
 		fmt.Println("Failed to unmarhsal: " + err.Error())
 	}
 
-	return as.Twitch.TwitchID
+	return *as
 }
