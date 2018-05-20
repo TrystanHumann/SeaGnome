@@ -58,20 +58,11 @@ export class AdminService {
   }
   // Address what the return type should be
   public basicAuthenticateUser(username: string, password: string): Observable<any> {
-    if (environment.production) {
-      let headers: HttpHeaders = new HttpHeaders();
-      headers = headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
-      headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
-      return this.http.get(this.baseurl + 'auth', { headers: headers, withCredentials: true });
-    } 
-    else {
-      // Handles bypassing authentication
-      console.log("bypassing auth");
-      const sub: Subject<any> = new Subject<any>();
-      return new Observable<any>(subs => {
-        subs.next(true);
-      });
-    }
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
+    headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    // withCredentials should use cookie ?
+    return this.http.get(this.baseurl + 'auth', { headers: headers, withCredentials: true });
   }
 
   public changePassword(password, newpassword) {
