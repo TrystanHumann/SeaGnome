@@ -60,7 +60,15 @@
            </div>
         </div>
       </div> -->
-
+      <!-- <div class="flexBoxCustomContainerColumn">
+        <div class="columnContainer">
+          <h2>Change Background</h2>
+          <div style="padding-top:5px;text-align:center;">
+            <input style="display:none;" type="file" name="img" id="img" accept=".png" (change)="uploadBackground($event)"/>
+            <label class="btn btn-primary" style="margin-top:5px;" for="img">Upload Background</label>
+           </div>
+        </div>
+      </div> -->
 
       <div class="flexBoxCustomContainerRow">
         <h2 style="position: relative;top:-15%;left:50%;transform: translateX(-50%);">Manage Events</h2>
@@ -129,6 +137,13 @@
               <br>
               <button class="btn btn-primary" type="submit" style="margin-top:5px;" (click)="activateEvent()">Select Event</button>
             </div>
+          </div>
+          <div class="lg-col-2" style="padding-right:25px;text-align:center;">
+            <h2>Change Background</h2>
+            <div style="padding-top:5px;text-align:center;">
+              <input style="display:none;" type="file" name="img" id="img" accept=".png" (change)="uploadBackground($event)"/>
+              <label class="btn btn-primary" style="margin-top:5px;" for="img">Upload Background</label>
+             </div>
           </div>
         </div>
       </div>

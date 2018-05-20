@@ -274,4 +274,32 @@ export class AdminComponent implements OnInit {
       }
     );
   }
-}
+
+  public uploadBackground(event) {
+    const fileList: FileList = event.target.files;
+    if (fileList.length === 0) {
+      return;
+    }
+    const file = fileList[0];
+
+    const formData = new FormData();
+    formData.append('img', file, file.name);
+    const headers = new Headers();
+    /** No need to include Content-Type in Angular 4 */
+    const params = new HttpParams();
+    const options = {
+      headers: headers,
+      params: params,
+      reportProgress: true,
+      Timeout: 1000
+    };
+    this.adminservice.uploadBackground(formData, options).subscribe(
+      (res) => {
+        this.toastsManager.success('background has been uploaded!', null, { toastLife: 180000 });
+      },
+      (err) => {
+        this.toastsManager.error('Error uploading background, please try again.');
+      }
+    );
+  }
+} 

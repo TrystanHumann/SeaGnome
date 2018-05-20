@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { EventRequest } from '../models/EventRequest.model';
 import { EventResponse } from '../models/EventResponse.model';
 import { StreamerSetRequest } from '../models/StreamerSetRequest.model';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class AdminService {
@@ -57,16 +58,30 @@ export class AdminService {
   }
   // Address what the return type should be
   public basicAuthenticateUser(username: string, password: string): Observable<any> {
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
-    headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
-    // withCredentials should use cookie ?
-    return this.http.get(this.baseurl + 'auth', { headers: headers, withCredentials: true });
+    if (environment.production) {
+      let headers: HttpHeaders = new HttpHeaders();
+      headers = headers.append('Authorization', 'Basic ' + btoa(username + ':' + password));
+      headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
+      return this.http.get(this.baseurl + 'auth', { headers: headers, withCredentials: true });
+    } 
+    else {
+      // Handles bypassing authentication
+      console.log("bypassing auth");
+      const sub: Subject<any> = new Subject<any>();
+      return new Observable<any>(subs => {
+        subs.next(true);
+      });
+    }
   }
 
   public changePassword(password, newpassword) {
     // withCredentials should use cookie ?
     // tslint:disable-next-line:max-line-length
     return this.http.post(this.baseurl + 'password/change', { oldPassword: btoa(password), newPassword: btoa(newpassword) }, { withCredentials: true });
+  }
+
+
+  public uploadBackground(background: FormData, options): any {
+    return this.http.put(this.baseurl + 'background/upload', background, options);
   }
 }
