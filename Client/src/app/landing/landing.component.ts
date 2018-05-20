@@ -17,7 +17,9 @@ export class LandingComponent implements OnInit {
   public streamers: Streamer[];
   public trustedUrl: Array<SafeUrl> = [];
   public trustedUrlChat: Array<SafeUrl> = [];
+  public streamerNames: Array<string> = [];
   public user: string;
+  public singleStreamerDisplay;
   public ga: any;
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer, private router: Router) {
@@ -30,6 +32,7 @@ export class LandingComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.singleStreamerDisplay = null;
     this.setStreamers();
   }
 
@@ -41,17 +44,34 @@ export class LandingComponent implements OnInit {
         }
         streamers.forEach(streamer => {
           // tslint:disable-next-line:max-line-length
-          this.trustedUrl.push(this.sanitizer.bypassSecurityTrustResourceUrl('http://player.twitch.tv/?channel=' + streamer.tag + '&muted=true'));
+          this.trustedUrl.push(this.sanitizer.bypassSecurityTrustResourceUrl('https://player.twitch.tv/?channel=' + streamer.tag + '&muted=true'));
         });
 
         streamers.forEach(streamer => {
           // tslint:disable-next-line:max-line-length
-          this.trustedUrlChat.push(this.sanitizer.bypassSecurityTrustResourceUrl('http://www.twitch.tv/' + streamer.tag + '/chat?darkpopout'));
+          this.trustedUrlChat.push(this.sanitizer.bypassSecurityTrustResourceUrl('http://www.twitch.tv/embed/' + streamer.tag + '/chat'));
+        });
+
+        streamers.forEach(streamer => {
+          // tslint:disable-next-line:max-line-length
+          this.streamerNames.push(streamer.tag);
         });
       }
     );
   }
 
+  public setsingleStreamerDisplay(streamer : string): void {
+    this.singleStreamerDisplay = streamer;
+  }
+
+  public getSingleStreamerStreamChannelURL(): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`https://player.twitch.tv/?channel=${this.singleStreamerDisplay}`);
+  }
+
+  public getSingleStreamerChatURL(): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`http://www.twitch.tv/embed/${this.singleStreamerDisplay}/chat`);
+  }
+  
   public enterPress() {
     this.router.navigate(['user', this.user]);
   }
