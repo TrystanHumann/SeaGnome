@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Streamer } from '../models/Streamer.model';
+import { Streamer, ButtonStyle } from '../models/Streamer.model';
 import { Observable } from 'rxjs/Observable';
 import { EventRequest } from '../models/EventRequest.model';
 import { EventResponse } from '../models/EventResponse.model';
@@ -71,8 +71,14 @@ export class AdminService {
     return this.http.post(this.baseurl + 'password/change', { oldPassword: btoa(password), newPassword: btoa(newpassword) }, { withCredentials: true });
   }
 
-
   public uploadBackground(background: FormData, options): any {
     return this.http.put(this.baseurl + 'background/upload', background, options);
+  }
+
+  public getButtonStyles(): Observable<ButtonStyle[]> {
+    return this.http.get<ButtonStyle[]>(this.baseurl + 'buttonstyle');
+  }
+  public updateButtonStyles(body: ButtonStyle): Observable<void> {
+    return this.http.put<void>(this.baseurl + 'buttonstyle', body);
   }
 }

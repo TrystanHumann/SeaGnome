@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Streamer } from '../models/Streamer.model';
+import { Streamer, ButtonStyle } from '../models/Streamer.model';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 import { AdminService } from '../admin/admin.service';
 import { RouterLink, NavigationEnd } from '@angular/router';
 import { Router } from '@angular/router';
+import { style } from '@angular/animations';
 
 declare var ga: Function;
 
@@ -21,6 +22,9 @@ export class LandingComponent implements OnInit {
   public user: string;
   public singleStreamerDisplay;
   public ga: any;
+  public buttonStyleArray : ButtonStyle[];
+  public buttonStyleMap : Map<string, ButtonStyle>;
+
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer, private router: Router) {
     this.router.events.subscribe(event => {
@@ -33,7 +37,24 @@ export class LandingComponent implements OnInit {
 
   ngOnInit() {
     this.singleStreamerDisplay = null;
+    this.buttonStyleMap = new Map<string, ButtonStyle>();
     this.setStreamers();
+    this.getButtonStyles();
+  }
+
+  public getButtonStyles() : void {
+    this.adminservice.getButtonStyles().subscribe(
+      res => {
+        this.buttonStyleArray = res;
+
+        // Creating map to easily access values by id
+        this.buttonStyleArray.forEach(style => {
+          this.buttonStyleMap.set(style.button_id, style);
+        });
+      },
+      err => {
+        this.buttonStyleArray = [];
+      });
   }
 
   public setStreamers() {

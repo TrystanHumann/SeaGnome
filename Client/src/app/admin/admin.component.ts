@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { AdminService } from './admin.service';
-import { Streamer } from '../models/Streamer.model';
+import { Streamer, ButtonStyle } from '../models/Streamer.model';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpParams, HttpHeaders } from '@angular/common/http';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
@@ -40,6 +40,10 @@ export class AdminComponent implements OnInit {
   public Password: string;
   // tslint:disable-next-line:max-line-length
   public manageEventsObject = { updatePredictions: null, updateEventResults: null, completeEvent: null, deleteEvent: null, activateEvent: null };
+  
+  public buttonStyleArray : ButtonStyle[];
+  public buttonStyleSelected : ButtonStyle;
+
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer,
     private modalService: NgbModal,
@@ -71,6 +75,17 @@ export class AdminComponent implements OnInit {
     this.getStreamers();
     this.eventCreateRows.push(this.startInsertRows);
     this.getEvents();
+    this.getButtonStyles();
+  }
+
+  public getButtonStyles() {
+    this.adminservice.getButtonStyles().subscribe(res => {
+      this.buttonStyleArray = res;
+      if (this.buttonStyleArray.length > 0)
+      {
+        this.buttonStyleSelected = this.buttonStyleArray[0];
+      }
+    }, err => this.toastsManager.error('Unable to fetch button styles', 'Error'));
   }
 
   public getStreamers() {
@@ -86,6 +101,7 @@ export class AdminComponent implements OnInit {
       }
     );
   }
+  
 
   public updateStreamers() {
     const streamRequest: StreamerSetRequest = { streamerOne: this.streamerOne, streamerTwo: this.streamerTwo };
@@ -301,5 +317,16 @@ export class AdminComponent implements OnInit {
         this.toastsManager.error('Error uploading background, please try again.');
       }
     );
+  }
+
+  public submitStyle() {
+    this.adminservice.updateButtonStyles(this.buttonStyleSelected).subscribe(
+      res => {
+        this.toastsManager.success(`successfully updated button with guid ${this.buttonStyleSelected.button_id}`, 'Success');
+      },
+      err => {
+        this.toastsManager.error(`error updating button with guid ${this.buttonStyleSelected.button_id}`, 'Error');
+      }
+    )
   }
 } 
