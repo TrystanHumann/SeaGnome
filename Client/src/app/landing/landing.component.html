@@ -22,20 +22,22 @@
       <input class="colorful" type="search" [(ngModel)]="user" value="doodo" placeholder="Search user" (keyup.enter)="enterPress()"
       />
       <div class="buttonContainer">
-        <a href="https://www.streambig.net/momam3.html">
-          <button class="btn btn-primary" style="margin:3px 3px;" type="submit">What is MOMAM?</button>
-        </a>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc62kU4IHJhMna2FZesS1qqO6U8tvHNg0AX1MvqTYJKKRK6sg/viewform">
-          <button class="btn btn-primary" style="margin:3px 3px;" type="submit">Make your prediction!</button>
-        </a>
+        <a class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2')" 
+          [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_color }">
+          {{buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_text}}</a>
+        
+        <a class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3')" 
+          [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_color }">
+          {{buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_text}}</a>
+
         <button class="btn btn-primary moveOnResize" style="margin:3px 3px;" type="submit" routerLink="/user/user">Leaderboard</button>
         <button class="btn btn-primary" style="margin:3px 3px;" type="submit" routerLink="/user/{{user}}">Search</button>
 
       </div>
       <div style="text-align:center;width:100%;padding-top:5px;">
-        <a class="e-widget no-button" href="https://gleam.io/8bg2J/momam-3" rel="nofollow">
-          <button class="btn btn-success">MOMAM 3 Giveaway!</button>
-        </a>
+        <a class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4')" 
+          [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_color }">
+          {{buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_text}}</a>
         <script type="text/javascript" src="https://js.gleam.io/e.js" async="true"></script>
       </div>
 
