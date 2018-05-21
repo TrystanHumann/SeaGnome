@@ -59,6 +59,7 @@ func main() {
 	routes.Handle("/predictions", &handlers.Predictions{Data: db})
 	routes.Handle("/streamer", &handlers.Streamer{Data: db, TwitchID: twitchID})
 	routes.Handle("/password/change", &handlers.ChangePassword{Data: db})
+	routes.Handle("/buttonstyle", &handlers.ButtonStyle{Data: db})
 	routes.Handle("/background/upload", &handlers.BackgroundUpload{FilePath: appSettings.BackgroundPath})
 
 	http.Handle("/", &server{routes})
@@ -77,7 +78,7 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", origin)
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers",
-			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Auth-Token")
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Auth-Token,Access-Control-Request-Headers")
 	}
 	// Stop here if its Preflighted OPTIONS request
 	if r.Method == "OPTIONS" {

@@ -4,6 +4,8 @@ import (
 	sql "database/sql"
 	"time"
 
+	"github.com/satori/go.uuid"
+
 	"github.com/rs/xid"
 )
 
@@ -168,4 +170,12 @@ type TwitchStreamer struct {
 	Delay      interface{} `json:"delay"`
 	Banner     interface{} `json:"banner"`
 	Background interface{} `json:"background"`
+}
+
+// ButtonStyle : styles for buttons
+type ButtonStyle struct {
+	ID    uuid.UUID `json:"button_id" db:"button_id"`
+	Color string    `json:"button_color" db:"button_color"`
+	Text  string    `json:"button_text" db:"button_text"`
+	Link  string    `json:"button_link" db:"button_link"`
 }
