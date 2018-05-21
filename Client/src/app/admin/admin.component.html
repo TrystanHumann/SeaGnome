@@ -131,30 +131,33 @@
         </div>
       </div>
 
-      
+
       <div class="flexBoxCustomContainerRow">
-          <h2 style="position: relative;top:-15%;left:50%;transform: translateX(-50%);">Update Button Styles</h2>
-          <div class="row" style="width: 100%">
-            <div class="lg-col-2" style="padding-right:25px;text-align:center;">
-                <div style="padding-top:5px;text-align:center;">
-                    <a class="btn btn-primary" [attr.href]="buttonStyleSelected.button_link" [ngStyle]="{ 'background-color': buttonStyleSelected.button_color, 'border-color': buttonStyleSelected.button_color }">{{buttonStyleSelected.button_text}}</a>
-                    <br />
-                    <select [(ngModel)]="buttonStyleSelected" style="width:75%">
-                      <option *ngFor="let bStyle of buttonStyleArray" [ngValue]="bStyle">{{bStyle.button_id}}</option>
-                    </select>
-                    <div class="form-group">
-                      <label for="b_color">Color: </label>
-                      <input type="color" class="form-control" id="b_color" required [(ngModel)]="buttonStyleSelected.button_color" name="b_color"/>
-                      <label for="b_text">Text: </label>
-                      <input type="text" class="form-control" id="b_text" required [(ngModel)]="buttonStyleSelected.button_text" name="b_text"/>
-                      <label for="b_link">Link: </label>
-                      <input type="text" class="form-control" id="b_link" required [(ngModel)]="buttonStyleSelected.button_link" name="b_link"/>
-                      <button class="btn btn-primary" type="submit" (click)="submitStyle();">Submit</button>
-                    </div>
-                  </div>
+        <div style="position:relative;width:100%;left:50%;transform: translateX(-50%);">
+          <h2 style="position: relative;top:-15%;left:50%;transform: translateX(-50%);margin-left:15px;margin-right:15px;padding-top:15px;">Update Button Styles</h2>
+          <div class="lg-col-2" style="text-align:center;">
+            <div style="padding-top:5px;text-align:center;">
+              <a class="btn btn-primary" [attr.href]="buttonStyleSelected.button_link" [ngStyle]="{ 'background-color': buttonStyleSelected.button_color, 'border-color': buttonStyleSelected.button_color }">{{buttonStyleSelected.button_text}}</a>
+              <br />
+              <select [(ngModel)]="buttonStyleSelected" style="width:75%;margin-top:5px;">
+                <option *ngFor="let bStyle of buttonStyleArray" [ngValue]="bStyle">{{bStyle.button_id}}</option>
+              </select>
+              <div class="form-group">
+                <label for="b_color" style="margin-top:15px;">Color: </label>
+                <input type="color" class="form-control" id="b_color" required [(ngModel)]="buttonStyleSelected.button_color" name="b_color"
+                />
+                <label for="b_text" style="margin-top:15px;">Text: </label>
+                <input type="text" class="form-control" id="b_text" required [(ngModel)]="buttonStyleSelected.button_text" name="b_text"
+                />
+                <label for="b_link" style="margin-top:15px;">Link: </label>
+                <input type="text" class="form-control" id="b_link" required [(ngModel)]="buttonStyleSelected.button_link" name="b_link"
+                />
+                <button class="btn btn-primary" style="margin-top:15px;" type="submit" (click)="submitStyle();">Submit</button>
+              </div>
             </div>
-        </div>  
+          </div>
         </div>
+      </div>
 
     </div>
   </div>
