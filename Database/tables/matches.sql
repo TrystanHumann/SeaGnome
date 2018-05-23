@@ -1,14 +1,13 @@
-CREATE TABLE "public".matches (
+CREATE TABLE public.matches (
 	id serial NOT NULL,
 	event int4 NOT NULL,
 	game int4 NOT NULL,
 	scheduled timestamptz NULL,
-	completed timestamptz NULL,
 	winner int4 NULL,
-	PRIMARY KEY (id),
-	FOREIGN KEY (event) REFERENCES events(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
-	FOREIGN KEY (game) REFERENCES games(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
-	FOREIGN KEY (winner) REFERENCES competitors(id) ON UPDATE RESTRICT ON DELETE RESTRICT
+	CONSTRAINT matches_pkey PRIMARY KEY (id),
+	CONSTRAINT matches_unique_event_game UNIQUE (event, game),
+	CONSTRAINT matches_game_games_id_fk FOREIGN KEY (game) REFERENCES games(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+	CONSTRAINT matches_winner_competitors_id_fk FOREIGN KEY (winner) REFERENCES competitors(id) ON UPDATE RESTRICT ON DELETE RESTRICT
 )
 WITH (
 	OIDS=FALSE

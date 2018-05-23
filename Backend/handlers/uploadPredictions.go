@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -20,10 +19,12 @@ type UploadPredictions struct {
 
 // ServeHTTP : Listens for a request and creates a response
 func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*1800000)
+	parentContext := context.TODO()
+	ctx, ctxCancel := context.WithTimeout(parentContext, time.Hour*2)
 	defer ctxCancel()
+
 	switch r.Method {
-	case http.MethodPost:
+	case http.MethodPut:
 		var buffer bytes.Buffer
 
 		file, header, err := r.FormFile("uploadFile")
@@ -47,14 +48,10 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// ID of the event that we will be updating data for
 		eventID := r.FormValue("eventID")
 
-		id, err := strconv.Atoi(eventID)
-
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
-		fmt.Printf("%i\n", id)
 
 		// transfer contents of the file to our buffer
 		io.Copy(&buffer, file)
@@ -68,8 +65,7 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		columnNames := strings.Split(contents[0], ",")
-		firstRow, gamesCache := getGames(columnNames)
-		fmt.Println(firstRow)
+		_, gamesCache := getGames(columnNames)
 		var gameIDSlice []int
 		var userIDSlice []int
 		competitorCache := make(map[string]int)
@@ -83,30 +79,21 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		for _, game := range gamesCache {
 			// get game Id from hitting postgres
-			// fmt.Println(game)
 			var id int
-			rows, err := u.Data.QueryContext(ctx, insertGameQuery, game)
+			var matchID int
+			err := u.Data.GetContext(ctx, &id, insertGameQuery, game)
 			if err != nil {
 				fmt.Println(err)
 			}
-			if rows.Next() {
-				rows.Scan(&id)
-			}
-			rows.Close()
-			// fmt.Println(id)
 			gameIDSlice = append(gameIDSlice, id)
 
 			//upload a match
-			rows, err = u.Data.QueryContext(ctx, insertMatchQuery, eventID, id)
+			err = u.Data.GetContext(ctx, &matchID, insertMatchQuery, eventID, id)
 			if err != nil {
 				fmt.Println(err)
 			}
-			if rows.Next() {
-				rows.Scan(&id)
-			}
-			rows.Close()
 			if matchIDCache[game] == 0 {
-				matchIDCache[game] = id
+				matchIDCache[game] = matchID
 			}
 		}
 
@@ -120,55 +107,39 @@ func (u *UploadPredictions) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				var participantID int
 				var predictionID int
 				// user created(replace with postgres)
-				rows, err := u.Data.QueryContext(ctx, insertUserQuery, strings.ToLower(currentRowSplit[1]), strings.ToLower(currentRowSplit[2]))
-
+				err := u.Data.GetContext(ctx, &userID, insertUserQuery, strings.ToLower(currentRowSplit[1]), strings.ToLower(currentRowSplit[2]))
 				if err != nil {
 					fmt.Println(err)
 				}
-				if rows.Next() {
-					rows.Scan(&userID)
-				}
-				rows.Close()
 				userIDSlice = append(userIDSlice, userID)
 
 				// Create competitors
 				for colIndex, column := range currentRowSplit {
 					if colIndex < len(columnNames) {
 						if strings.Contains(columnNames[colIndex], "Predictions") {
-							// fmt.Println(len(currentRowSplit))
 							if competitorCache[column] == 0 {
-								rows, err := u.Data.QueryContext(ctx, insertCompetitorQuery, column)
-
+								if column == "" {
+									column = "Skip this"
+								}
+								err := u.Data.GetContext(ctx, &competitorID, insertCompetitorQuery, column)
 								if err != nil {
 									fmt.Println(err)
 								}
-								if rows.Next() {
-									rows.Scan(&competitorID)
-								}
-								rows.Close()
 								competitorCache[column] = competitorID
 
 							}
 							// match exist, map the competitor to the match
 							if matchIDCache[gamesCache[colIndex-3]] != 0 {
-								rows, err := u.Data.QueryContext(ctx, insertParticipantQuery, matchIDCache[gamesCache[colIndex-3]], competitorCache[column])
+								err := u.Data.GetContext(ctx, &participantID, insertParticipantQuery, matchIDCache[gamesCache[colIndex-3]], competitorCache[column])
 								if err != nil {
 									fmt.Println(err)
 								}
-								if rows.Next() {
-									rows.Scan(&participantID)
-								}
-								rows.Close()
 
 								//create a prediction
-								rows, err = u.Data.QueryContext(ctx, insertPredictionQuery, userID, participantID)
+								err = u.Data.GetContext(ctx, &predictionID, insertPredictionQuery, userID, participantID)
 								if err != nil {
 									fmt.Println(err)
 								}
-								if rows.Next() {
-									rows.Scan(&predictionID)
-								}
-								rows.Close()
 							}
 						}
 					}
@@ -190,8 +161,8 @@ func getGames(row []string) ([]string, []string) {
 		col = strings.Replace(col, "\"", "", -1)
 		if strings.Contains(col, "Predictions") {
 			col = strings.Replace(col, "Predictions [", "", -1)
-			col = strings.Trim(col, " ")
 			col = strings.Replace(col, "]", "", -1)
+			col = strings.TrimSpace(col)
 			games = append(games, col)
 		}
 		row[i] = col

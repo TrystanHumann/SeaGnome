@@ -6,9 +6,9 @@ import { AdminComponent } from '../admin/admin.component';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
-  { path: 'user', component: UserProfileComponent },
+  { path: 'user/:user', component: UserProfileComponent },
   { path: 'admin', component: AdminComponent },
-  { path: '*', component: LandingComponent },
+  { path: '**', component: LandingComponent },
 ];
 
 @NgModule({

@@ -1,13 +1,9 @@
--- drop function createevent_sp(name text)
-CREATE OR REPLACE FUNCTION createevent_sp
-(name text) RETURNS VOID AS
-$$
+CREATE OR REPLACE FUNCTION public.createevent_sp(name text)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
 declare nameParam text = $1;
 BEGIN
-  INSERT INTO public.events
-    (name, complete, created_date)
-  VALUES
-    (nameParam, false, timezone('utc', now()));
+    INSERT INTO public.events (name, complete, created_date, active) VALUES (nameParam, false, timezone('utc', now()), false);
 END
-$$
-  LANGUAGE 'plpgsql';
+$function$;

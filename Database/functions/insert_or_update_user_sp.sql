@@ -1,23 +1,17 @@
--- drop function insert_or_update_user_sp(text, text)
-CREATE OR REPLACE FUNCTION public.insert_or_update_user_sp(twitchUsername text, twitter text = null) returns table(returnid int)
+CREATE OR REPLACE FUNCTION public.insert_or_update_user_sp(twitchusername text, twitter text DEFAULT NULL::text)
+ RETURNS TABLE(returnid integer)
  LANGUAGE plpgsql
-AS $$
+AS $function$
 declare fetchID int;
 begin
-	fetchID := (select u.id from public.users u where u.twitchun = twitchUsername);
-	if fetchID is null then
 	-- insert
 		insert into public.users(twitchun, twitterhandle)
-		values (twitchUsername, twitter);
-	else 
-	-- update
-		update public.users
-		set twitterhandle = twitter
-		where id = fetchID; 
-	end if;
+		values (twitchUsername, twitter) on conflict(twitchun) 
+		do update
+		set
+		twitchun = twitchusername,
+		twitterhandle = twitter;
 	return query
 	select u.id as returnid from public.users u where u.twitchun = twitchUsername;
 	--RAISE INFO 'Out variable: %', outUserID;
-end $$;
-
-
+end $function$;

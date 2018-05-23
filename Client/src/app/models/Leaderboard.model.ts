@@ -1,4 +1,5 @@
 export interface Leaderboard {
-  username: string;
-  score: number;
+  User: string;
+  Total: number;
+  Percent: number;
 }

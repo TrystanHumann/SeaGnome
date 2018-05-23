@@ -20,6 +20,7 @@ type Events struct {
 func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*15)
 	defer ctxCancel()
+
 	switch r.Method {
 	// GET
 	case http.MethodGet:
@@ -39,6 +40,23 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// POST
 	case http.MethodPost:
+		// Given an ID we want to update completed
+		id := r.URL.Query().Get("id")
+		complete := r.URL.Query().Get("completed")
+
+		if id != "" && complete != "" {
+			_, err := h.updateEvent(ctx, id, complete)
+			if err != nil {
+				http.Error(w, "error updating event", http.StatusBadRequest)
+				return
+			}
+		} else {
+			http.Error(w, "requires id and completed query parameters to update event", http.StatusBadRequest)
+			return
+		}
+
+	// PUT
+	case http.MethodPut:
 		var body types.Event
 		err := json.NewDecoder(r.Body).Decode(&body)
 		if err != nil {
@@ -58,34 +76,6 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// // Rows were not affected
-		// if rows <= 0 {
-		// 	http.Error(w, "no rows affected", http.StatusBadRequest)
-		// 	return
-		// }
-
-	// PUT
-	case http.MethodPut:
-		// Given an ID we want to update completed
-		id := r.URL.Query().Get("id")
-		complete := r.URL.Query().Get("completed")
-
-		if id != "" && complete != "" {
-			_, err := h.updateEvent(ctx, id, complete)
-			if err != nil {
-				http.Error(w, "error updating event", http.StatusBadRequest)
-				return
-			}
-
-			// if rows <= 0 {
-			// 	http.Error(w, "error updating event", http.StatusBadRequest)
-			// 	return
-			// }
-		} else {
-			http.Error(w, "requires id and completed query parameters to update event", http.StatusBadRequest)
-			return
-		}
-
 	// DELETE
 	case http.MethodDelete:
 		// Given an ID we want to update completed
@@ -97,13 +87,6 @@ func (h *Events) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "error deleting event", http.StatusBadRequest)
 				return
 			}
-			// Rows were not affected
-			// if rows <= 0 {
-			// 	err = errors.New("no rows were affected")
-			// 	friendlyResponse = types.NewFriendlyResponse(http.StatusBadRequest, nil, err, err.Error())
-			// 	json.NewEncoder(w).Encode(friendlyResponse)
-			// 	return
-			// }
 		} else {
 			http.Error(w, "error deleting event", http.StatusBadRequest)
 			return

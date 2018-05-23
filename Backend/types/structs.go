@@ -1,7 +1,10 @@
 package types
 
 import (
+	sql "database/sql"
 	"time"
+
+	"github.com/satori/go.uuid"
 
 	"github.com/rs/xid"
 )
@@ -32,10 +35,40 @@ type Prediction struct {
 	Prediction string
 }
 
+// GamePrediction : A User's prediction for a game
+type GamePrediction struct {
+	Game       string `db:"game"`
+	Prediction string `db:"prediction"`
+	Winner     string `db:"winner"`
+}
+
+// UserSearchResult : A User's search result
+type UserSearchResult struct {
+	ID      int    `db:"id"`
+	Twitch  string `db:"twitch"`
+	Twitter string `db:"twitter"`
+}
+
+// Participant : A participants scores
+type Participant struct {
+	Name    string `db:"name"`
+	Wins    int    `db:"wins"`
+	Matches int    `db:"matches"`
+}
+
 // Match : The matches for an event
 type Match struct {
 	ID   int    `db:"id"`
 	Game string `db:"game"`
+}
+
+// MatchesForResults : Matches that are used for uploading results
+type MatchesForResults struct {
+	ID           int    `db:"id"`
+	GameID       int    `db:"gameid"`
+	Game         string `db:"game"`
+	CompetitorID int    `db:"competitorid"`
+	Competitor   string `db:"competitor"`
 }
 
 // Competitor : A competitor or a match
@@ -57,6 +90,12 @@ type Streamer struct {
 	Active bool   `json:"active" db:"active"`
 }
 
+// StreamerSetRequest : A twitch user updated to displayed on the front page
+type StreamerSetRequest struct {
+	StreamerOne string `json:"StreamerOne" db:"StreamerOne"`
+	StreamerTwo string `json:"StreamerTwo" db:"StreamerTwo"`
+}
+
 // ID : A user's id throught the application.
 type ID struct {
 	ID       xid.ID    `json:"id"`
@@ -64,6 +103,36 @@ type ID struct {
 	Username string    `json:"username"`
 	Password string    `json:"password"`
 	Expires  time.Time `json:"expires"`
+}
+
+// Score : The evaluation of a user's prediction.
+type Score struct {
+	User    string  `db:"user"`
+	Total   int     `db:"total"`
+	Percent float32 `db:"percent"`
+}
+
+// DBPredictionCount : The predictions for a participant in a game.
+type DBPredictionCount struct {
+	Game          string         `db:"game"`
+	Participant   string         `db:"participant"`
+	Votes         int            `db:"votes"`
+	ScheduledDate sql.NullString `db:"scheduled"`
+}
+
+// PredictionCount : The top 3 predictions for up coming games.
+type PredictionCount struct {
+	Game          string
+	ScheduledDate string
+	First         struct {
+		Competitor string
+		Votes      int
+	}
+	Second struct {
+		Competitor string
+		Votes      int
+	}
+	Abstain int
 }
 
 // TwitchStreamer : Twitch's view of a streamer's account.
@@ -101,4 +170,12 @@ type TwitchStreamer struct {
 	Delay      interface{} `json:"delay"`
 	Banner     interface{} `json:"banner"`
 	Background interface{} `json:"background"`
+}
+
+// ButtonStyle : styles for buttons
+type ButtonStyle struct {
+	ID    uuid.UUID `json:"button_id" db:"button_id"`
+	Color string    `json:"button_color" db:"button_color"`
+	Text  string    `json:"button_text" db:"button_text"`
+	Link  string    `json:"button_link" db:"button_link"`
 }

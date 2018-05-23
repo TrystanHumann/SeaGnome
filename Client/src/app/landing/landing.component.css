@@ -10,7 +10,7 @@
   left: 0;
   bottom: 0;
   right: 0;
-  overflow: hidden;
+  overflow-x: hidden;
   background: #222222 url("../../assets/background.png");
   background-repeat: no-repeat;
   background-size: cover;
@@ -18,19 +18,9 @@
 }
 
 .buttonContainer {
-  text-align: right;
-  width: 64.5%;
-  padding-top: 3px;
-}
-
-.fillUp {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  overflow: auto;
+  text-align: center;
   width: 100%;
+  padding-top: 3px;
 }
 
 .colorful {
@@ -48,7 +38,7 @@
 
 .centerStuff {
   position: absolute;
-  top: 10%;
+  top: 5%;
   width: 100%;
   text-align: center;
 }

@@ -8,4 +8,4 @@ from public.streamers
 where active = true
 limit $1
 
- $function$
+ $function$;

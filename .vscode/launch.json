@@ -10,11 +10,15 @@
             "request": "launch",
             "mode": "debug",
             "remotePath": "",
-            "port": 2345,
+            "port": 8000,
             "host": "127.0.0.1",
             "program": "${fileDirname}",
             "env": {},
-            "args": ["env:Development", "port:8080", "secrets:.."],
+            "args": [
+                "env:Development",
+                "port:8000",
+                "secrets:.."
+            ],
             "showLog": true
         }
     ]
