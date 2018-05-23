@@ -27,7 +27,7 @@
     <div class="grid content" style="overflow: hidden;">
       <h1 class="makeSmallOnResize" style="padding-left:15px;">Next Games</h1>
       <div style="height:60%;">
-        <div class="scrollbar" id="scrollbar" style="width:100%;height: 100%;background-color:transparent;">
+        <div class="scrollbar" id="scrollbar" style="width:100%;height: 100%;background-color:transparent;overflow:scroll;">
           <table class="nextGames">
             <thead>
               <tr>
@@ -37,10 +37,16 @@
                   <br> favored</th>
                 <th>{{RunnerTwo.username}}
                   <br> favored </th>
+                <th>{{RunnerThree.username}}
+                  <br> favored </th>
                 <th>
-                  <br>Abstain</th>
-                <th>
-                  <br>Scheduled Date</th>
+                  <th>{{RunnerFour.username}}
+                    <br> favored </th>
+                  <th>
+                    <th>
+                      <br>Abstain</th>
+                    <th>
+                      <br>Scheduled Date</th>
               </tr>
             </thead>
             <tbody>
@@ -48,6 +54,8 @@
                 <td>{{gameResult.Game}}</td>
                 <td style="text-align:left">&emsp;{{gameResult.First.Votes}}</td>
                 <td style="text-align:left">&emsp;{{gameResult.Second.Votes}}</td>
+                <td style="text-align:left">&emsp;{{gameResult.Third.Votes}}</td>
+                <td style="text-align:left">&emsp;{{gameResult.Fourth.Votes}}</td>
                 <td style="text-align:left">&emsp;{{gameResult.Abstain}}</td>
                 <td style="text-align:left">&emsp;{{gameResult.ScheduledDate}}</td>
               </tr>
@@ -56,9 +64,10 @@
         </div>
       </div>
       <hr>
-      <div *ngFor="let runner of runners " style="text-align:center;">
-        <p></p>
-        <p style="font-size:18px;">{{runner.Name}} has won {{runner.Wins}} out of {{runner.Matches}} matches.</p>
+      <div style="width:100%;height:20%;overflow-y:scroll">
+        <div *ngFor="let runner of runners" style="text-align:center;">
+          <p style="font-size:18px;">{{runner.Name}} has won {{runner.Wins}} out of {{runner.Matches}} matches.</p>
+        </div>
       </div>
     </div>
 

@@ -101,6 +101,16 @@ func (g *Games) getFuturePredictions(ctx context.Context, w http.ResponseWriter,
 			predictions[predCount].Second.Competitor = allPredictions[index].Participant
 
 			// If the Abstain vote hasn't been populated and it is the abstain vote
+		} else if predictions[predCount].Third.Votes == 0 && !strings.EqualFold(allPredictions[index].Participant, "Skip this") {
+			predictions[predCount].Third.Votes = allPredictions[index].Votes
+			predictions[predCount].Third.Competitor = allPredictions[index].Participant
+
+			// If the Abstain vote hasn't been populated and it is the abstain vote
+		} else if predictions[predCount].Fourth.Votes == 0 && !strings.EqualFold(allPredictions[index].Participant, "Skip this") {
+			predictions[predCount].Fourth.Votes = allPredictions[index].Votes
+			predictions[predCount].Fourth.Competitor = allPredictions[index].Participant
+
+			// If the Abstain vote hasn't been populated and it is the abstain vote
 		} else if predictions[predCount].Abstain == 0 && strings.EqualFold(allPredictions[index].Participant, "Skip this") {
 			predictions[predCount].Abstain = allPredictions[index].Votes
 		}

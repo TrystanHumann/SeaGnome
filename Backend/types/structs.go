@@ -132,6 +132,14 @@ type PredictionCount struct {
 		Competitor string
 		Votes      int
 	}
+	Third struct {
+		Competitor string
+		Votes      int
+	}
+	Fourth struct {
+		Competitor string
+		Votes      int
+	}
 	Abstain int
 }
 
