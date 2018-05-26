@@ -24,6 +24,7 @@ export class LandingComponent implements OnInit {
   public ga: any;
   public buttonStyleArray : ButtonStyle[];
   public buttonStyleMap : Map<string, ButtonStyle>;
+  public webpageTitle: string;
 
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer, private router: Router) {
@@ -38,8 +39,17 @@ export class LandingComponent implements OnInit {
   ngOnInit() {
     this.singleStreamerDisplay = null;
     this.buttonStyleMap = new Map<string, ButtonStyle>();
+    this.getWebpageTitle();
     this.setStreamers();
     this.getButtonStyles();
+  }
+
+  public getWebpageTitle(): void {
+    this.adminservice.getTitle().subscribe(res => {
+      if (res.length > 0) {
+        this.webpageTitle = res[0];
+      }
+    });
   }
 
   public getButtonStyles() : void {

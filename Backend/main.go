@@ -61,6 +61,7 @@ func main() {
 	routes.Handle("/password/change", &handlers.ChangePassword{Data: db})
 	routes.Handle("/buttonstyle", &handlers.ButtonStyle{Data: db})
 	routes.Handle("/background/upload", &handlers.BackgroundUpload{FilePath: appSettings.BackgroundPath})
+	routes.Handle("/title", &handlers.WebsiteTitle{Data: db})
 
 	http.Handle("/", &server{routes})
 
