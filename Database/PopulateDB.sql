@@ -186,6 +186,17 @@ WITH (
 );
 
 
+-- Web page title
+CREATE TABLE public.webpagetitle (
+	id serial,
+	title varchar(100) not NULL
+	
+)
+WITH (
+	OIDS=FALSE
+) ;
+
+
 
 ---------------- FUNCTIONS ----------------
 
@@ -722,3 +733,29 @@ AS $function$
 	order by m.id;
 
 $function$
+
+
+-- Updating and getting titles
+CREATE OR REPLACE FUNCTION public.updateTitle(varchar)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+declare 
+	newtitle varchar(100) = $1;
+BEGIN
+    -- setting title for them all
+    update public.webpagetitle
+    set title = newtitle
+END
+$function$;
+
+
+CREATE OR REPLACE FUNCTION public.getwebsitetitle()
+ RETURNS TABLE(title varchar)
+ LANGUAGE sql
+AS $function$
+    -- getting first title
+	select title 
+    from public.webpagetitle
+    limit 1;
+$function$;

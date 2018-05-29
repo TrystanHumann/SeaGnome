@@ -59,6 +59,14 @@
             <label class="btn btn-primary" style="margin-top:5px;" for="img">Upload Background</label>
           </div>
         </div>
+        <div class="lg-col-2" style="padding-right:25px;text-align:center;">
+          <h2>Change Title</h2>
+          <div style="padding-top:5px;text-align:center;">
+            <input type="text" name="title" [(ngModel)]="webpageTitle" placeholder="Title" style="display:block;border-radius:5px;height:25px;margin: 5px 5px;border: 0;padding:5px;">
+
+            <button class="btn btn-primary" type="submit" style="display:block;margin:5px 5px;" (click)="updateTitle()">Update Webpage Title</button>
+          </div>
+        </div>
       </div>
       <div class="flexBoxCustomContainerRow">
         <h2 style="position: relative;top:-15%;left:50%;transform: translateX(-50%);">Manage Events</h2>
