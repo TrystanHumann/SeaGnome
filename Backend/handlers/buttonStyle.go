@@ -9,8 +9,8 @@ import (
 
 	"encoding/json"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/TrystanHumann/SeaGnome/Backend/types"
+	"github.com/jmoiron/sqlx"
 )
 
 // ButtonStyle : Handles Button Style requests
@@ -51,7 +51,7 @@ func (h *ButtonStyle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "error decoding body for button styles", http.StatusBadRequest)
 			return
 		}
-		_, err = h.insertOrUpdateButtonStyles(ctx, body.ID, body.Color, body.Text, body.Link)
+		_, err = h.insertOrUpdateButtonStyles(ctx, body.ID, body.Color, body.Text, body.Link, body.IsHiding)
 		if err != nil {
 			http.Error(w, "error inserting/updating button styles", http.StatusBadRequest)
 			return
@@ -72,9 +72,9 @@ func (h *ButtonStyle) getButtonStyle(ctx context.Context) ([]types.ButtonStyle, 
 }
 
 // insertOrUpdateButtonStyles : Updates/Inserts Button Styles
-func (h *ButtonStyle) insertOrUpdateButtonStyles(ctx context.Context, id uuid.UUID, color string, text string, link string) (int64, error) {
-	query := "select * from public.insert_button_style_sp($1::uuid, $2::varchar(18), $3::varchar(50), $4::text);"
-	res, err := h.Data.ExecContext(ctx, query, id, color, text, link)
+func (h *ButtonStyle) insertOrUpdateButtonStyles(ctx context.Context, id uuid.UUID, color string, text string, link string, hiding bool) (int64, error) {
+	query := "select * from public.insert_button_style_sp($1::uuid, $2::varchar(18), $3::varchar(50), $4::text, $5::boolean);"
+	res, err := h.Data.ExecContext(ctx, query, id, color, text, link, hiding)
 	if err != nil {
 		return 0, err
 	}
