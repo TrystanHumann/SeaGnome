@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/trystanhumann/SeaGnome/Backend/types"
+	"github.com/TrystanHumann/SeaGnome/Backend/types"
 )
 
 // Predictions : Handles requests associated to predictions

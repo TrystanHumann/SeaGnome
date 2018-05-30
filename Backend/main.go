@@ -12,11 +12,11 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/trystanhumann/SeaGnome/Backend/types"
+	"github.com/TrystanHumann/SeaGnome/Backend/types"
 	// driver for postgres connections
 	_ "github.com/lib/pq"
 
-	"github.com/trystanhumann/SeaGnome/Backend/handlers"
+	"github.com/TrystanHumann/SeaGnome/Backend/handlers"
 )
 
 type server struct {

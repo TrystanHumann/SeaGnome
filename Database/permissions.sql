@@ -57,5 +57,5 @@ GRANT UPDATE ON public.events TO momam ;
 GRANT DELETE ON public.events TO momam ;
 
 -- UPDATE 5/26/2018
-GRANT INSERT,UPDATE,DELETE ON public.button_styles TO momam ;
-GRANT INSERT,UPDATE,DELETE ON public.webpagetitle TO momam ;
+GRANT SELECT,INSERT,UPDATE,DELETE ON public.button_styles TO momam ;
+GRANT SELECT,INSERT,UPDATE,DELETE ON public.webpagetitle TO momam ;

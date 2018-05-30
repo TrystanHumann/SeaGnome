@@ -6,8 +6,6 @@
     <iframe *ngFor="let streamerChat of trustedUrlChat" class="hideOnSmallScreen" style="padding-left:50px;" frameborder="0"
       scrolling="no" id="chat_embed" [src]="streamerChat" height="50%" width="48%">
     </iframe>
-    <!-- <button *ngFor="let name of streamerNames" style="margin-left:50px;"  class="btn btn-primary">View {{name | titlecase}}</button> -->
-
     <div class="row text-center">
       <ng-template ngFor let-name [ngForOf]="streamerNames" let-i="index">
         <div class="col-md-6">
@@ -49,11 +47,11 @@
 
 <ng-template #showSingleStreamer>
   <div class="twitch-screen">
-    <iframe class="hideOnSmallScreen" style="padding-left:50px;" [src]="getSingleStreamerStreamChannelURL()" height="50%" width="48%"
+    <iframe class="hideOnSmallScreen" style="padding-left:50px;" [src]="getSingleStreamerStreamChannelURL()" height="75%" width="75%"
       frameborder="0" scrolling="no" allowfullscreen="true">
     </iframe>
     <iframe class="hideOnSmallScreen" style="padding-left:50px;" frameborder="0" scrolling="no" id="chat_embed" [src]="getSingleStreamerChatURL()"
-      height="50%" width="48%">
+      height="75%" width="23%">
     </iframe>
     <button [ngStyle]="{'margin-left': '5%'}" class="btn btn-primary" (click)="setsingleStreamerDisplay(null);">
       <i class="fa fa-arrow-left" aria-hidden="true"></i> Previous View</button>

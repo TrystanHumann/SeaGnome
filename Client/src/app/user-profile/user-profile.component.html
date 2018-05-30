@@ -1,9 +1,6 @@
 <div class="fullPage">
   <div class="container" style="width:100%; margin-top: 25px;">
     <div class="grid hero">
-      <!-- <button type="button" class="btn btn-primary" routerLink="" style="position:absolute;margin:5px 10px;border-radius:5px;">
-        <i class="fa fa-arrow-left"></i>
-      </button> -->
       <div style="width:100%;">
         <button type="button" class="btn btn-primary" routerLink="" style="border-radius:5px;display:inline-block;margin-left:15px;
         vertical-align: middle;">
@@ -33,29 +30,27 @@
               <tr>
                 <th>
                   <br>Upcoming Games</th>
-                <th>{{RunnerOne.username}}
+                <th *ngIf="RunnerOne.username">{{RunnerOne.username}}
                   <br> favored</th>
-                <th>{{RunnerTwo.username}}
+                <th *ngIf="RunnerTwo.username">{{RunnerTwo.username}}
                   <br> favored </th>
-                <th>{{RunnerThree.username}}
+                <th *ngIf="RunnerThree.username">{{RunnerThree.username}}
+                  <br> favored </th>
+                <th *ngIf="RunnerFour.username">{{RunnerFour.username}}
                   <br> favored </th>
                 <th>
-                  <th>{{RunnerFour.username}}
-                    <br> favored </th>
-                  <th>
-                    <th>
-                      <br>Abstain</th>
-                    <th>
-                      <br>Scheduled Date</th>
+                  <br>Abstain</th>
+                <th>
+                  <br>Scheduled Date</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let gameResult of this.gamesBoard ">
                 <td>{{gameResult.Game}}</td>
-                <td style="text-align:left">&emsp;{{gameResult.First.Votes}}</td>
-                <td style="text-align:left">&emsp;{{gameResult.Second.Votes}}</td>
-                <td style="text-align:left">&emsp;{{gameResult.Third.Votes}}</td>
-                <td style="text-align:left">&emsp;{{gameResult.Fourth.Votes}}</td>
+                <td *ngIf="RunnerOne.username" style="text-align:left">&emsp;{{gameResult.First.Votes}}</td>
+                <td *ngIf="RunnerTwo.username" style="text-align:left">&emsp;{{gameResult.Second.Votes}}</td>
+                <td *ngIf="RunnerThree.username" style="text-align:left">&emsp;{{gameResult.Third.Votes}}</td>
+                <td *ngIf="RunnerFour.username" style="text-align:left">&emsp;{{gameResult.Fourth.Votes}}</td>
                 <td style="text-align:left">&emsp;{{gameResult.Abstain}}</td>
                 <td style="text-align:left">&emsp;{{gameResult.ScheduledDate}}</td>
               </tr>

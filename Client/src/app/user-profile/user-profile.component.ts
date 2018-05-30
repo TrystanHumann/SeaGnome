@@ -88,7 +88,7 @@ export class UserProfileComponent implements OnInit {
           this.RunnerOne.username = this.gamesBoard[0].First.Competitor;
           this.RunnerTwo.username = this.gamesBoard[0].Second.Competitor;
           this.RunnerThree.username = this.gamesBoard[0].Third.Competitor;
-          this.RunnerFour.username = this.gamesBoard[0].Second.Competitor;
+          this.RunnerFour.username = this.gamesBoard[0].Fourth.Competitor;
         }
       }
     );
