@@ -18,6 +18,8 @@ type ButtonStyle struct {
 	Data *sqlx.DB
 }
 
+// NOTE: Is_Hiding works backwards to the way it should (true means its showing false means its hiding)
+
 // ServeHttp : Listens to event requests and creates a response
 func (h *ButtonStyle) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx, ctxCancel := context.WithTimeout(r.Context(), time.Second*15)
