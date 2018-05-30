@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/trystanhumann/SeaGnome/Backend/types"
+	"github.com/TrystanHumann/SeaGnome/Backend/types"
 )
 
 // Participants : handlers queries about match participants

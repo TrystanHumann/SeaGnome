@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/trystanhumann/SeaGnome/Backend/types"
+	"github.com/TrystanHumann/SeaGnome/Backend/types"
 )
 
 // Streamer : Handles requests for configuring the twitch streamers on the front page
