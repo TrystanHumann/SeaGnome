@@ -25,10 +25,10 @@
       <input class="colorful" type="search" [(ngModel)]="user" value="doodo" placeholder="Search user" (keyup.enter)="enterPress()"
       />
       <div class="buttonContainer">
-        <a class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_link" [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_color }">
+        <a *ngIf="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').is_hiding" class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_link" [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_color }">
           {{buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c2').button_text}}</a>
 
-        <a class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_link" [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_color }">
+        <a *ngIf="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').is_hiding" class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_link" [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_color }">
           {{buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c3').button_text}}</a>
 
         <button class="btn btn-primary moveOnResize" style="margin:3px 3px;" type="submit" routerLink="/user/user">Leaderboard</button>
@@ -36,7 +36,7 @@
 
       </div>
       <div style="text-align:center;width:100%;padding-top:5px;">
-        <a class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_link" [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_color }">
+        <a *ngIf="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').is_hiding" class="btn btn-primary" [attr.href]="buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_link" [ngStyle]="{ 'background-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_color, 'border-color': buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_color }">
           {{buttonStyleMap.get('466f4bf6-74eb-4033-a7bd-71f165b286c4').button_text}}</a>
         <script type="text/javascript" src="https://js.gleam.io/e.js" async="true"></script>
       </div>

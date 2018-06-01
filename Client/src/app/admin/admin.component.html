@@ -160,6 +160,9 @@
                 <label for="b_link" style="margin-top:15px;">Link: </label>
                 <input type="text" class="form-control" id="b_link" required [(ngModel)]="buttonStyleSelected.button_link" name="b_link"
                 />
+                <label for="b_hiding" style="margin-top:15px;">Show button: </label>
+                <input type="checkbox" class="form-control" id="b_hiding" required [(ngModel)]="buttonStyleSelected.is_hiding" name="b_hiding"
+                />
                 <button class="btn btn-primary" style="margin-top:15px;" type="submit" (click)="submitStyle();">Submit</button>
               </div>
             </div>

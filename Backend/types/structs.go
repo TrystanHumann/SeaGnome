@@ -182,8 +182,9 @@ type TwitchStreamer struct {
 
 // ButtonStyle : styles for buttons
 type ButtonStyle struct {
-	ID    uuid.UUID `json:"button_id" db:"button_id"`
-	Color string    `json:"button_color" db:"button_color"`
-	Text  string    `json:"button_text" db:"button_text"`
-	Link  string    `json:"button_link" db:"button_link"`
+	ID       uuid.UUID `json:"button_id" db:"button_id"`
+	Color    string    `json:"button_color" db:"button_color"`
+	Text     string    `json:"button_text" db:"button_text"`
+	Link     string    `json:"button_link" db:"button_link"`
+	IsHiding bool      `json:"is_hiding" db:"is_hiding"`
 }

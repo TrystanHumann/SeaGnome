@@ -9,4 +9,5 @@ export interface ButtonStyle {
   button_color: string;
   button_text: string;
   button_link: string;
+  is_hiding: boolean;
 }

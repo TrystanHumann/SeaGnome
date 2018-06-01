@@ -56,7 +56,6 @@ export class LandingComponent implements OnInit {
     this.adminservice.getButtonStyles().subscribe(
       res => {
         this.buttonStyleArray = res;
-
         // Creating map to easily access values by id
         this.buttonStyleArray.forEach(style => {
           this.buttonStyleMap.set(style.button_id, style);
