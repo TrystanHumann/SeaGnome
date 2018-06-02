@@ -81,4 +81,12 @@ export class AdminService {
   public updateButtonStyles(body: ButtonStyle): Observable<void> {
     return this.http.put<void>(this.baseurl + 'buttonstyle', body);
   }
+
+  getTitle(): Observable<Array<string>> {
+    return this.http.get<Array<string>>(`${this.baseurl}title`);
+  }
+
+  updateTitle(title: string):Observable<void>  {
+    return this.http.put<void>(`${this.baseurl}title`, { title: title });
+  }
 }

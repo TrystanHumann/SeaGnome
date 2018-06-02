@@ -43,6 +43,7 @@ export class AdminComponent implements OnInit {
   
   public buttonStyleArray : ButtonStyle[];
   public buttonStyleSelected : ButtonStyle;
+  public webpageTitle: string;
 
   constructor(public adminservice: AdminService,
     private sanitizer: DomSanitizer,
@@ -326,6 +327,17 @@ export class AdminComponent implements OnInit {
       },
       err => {
         this.toastsManager.error(`error updating button with guid ${this.buttonStyleSelected.button_id}`, 'Error');
+      }
+    )
+  }
+
+  public updateTitle(): void {
+    this.adminservice.updateTitle(this.webpageTitle).subscribe(
+      res => {
+        this.toastsManager.success(`successfully updated webpage title`, 'Success');
+      },
+      err => {
+        this.toastsManager.error(`error updating page title`, 'Error');
       }
     )
   }

@@ -26,6 +26,8 @@ export class UserProfileComponent implements OnInit {
   public gamesBoard = new Array<Nextgames>();
   public RunnerOne: Runner = { username: '', score: 0, gamesPlayed: 0 };
   public RunnerTwo: Runner = { username: '', score: 0, gamesPlayed: 0 };
+  public RunnerThree: Runner = { username: '', score: 0, gamesPlayed: 0 };
+  public RunnerFour: Runner = { username: '', score: 0, gamesPlayed: 0 };
   public runners = new Array<GameRunners>();
   public totalresults: Array<{ username: '', won: 0, total: 0 }>;
   public userPrediction: Array<Prediction>;
@@ -85,6 +87,8 @@ export class UserProfileComponent implements OnInit {
           this.gamesBoard = res;
           this.RunnerOne.username = this.gamesBoard[0].First.Competitor;
           this.RunnerTwo.username = this.gamesBoard[0].Second.Competitor;
+          this.RunnerThree.username = this.gamesBoard[0].Third.Competitor;
+          this.RunnerFour.username = this.gamesBoard[0].Fourth.Competitor;
         }
       }
     );

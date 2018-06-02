@@ -186,6 +186,17 @@ WITH (
 );
 
 
+-- Web page title
+CREATE TABLE public.webpagetitle (
+	id serial,
+	title varchar(100) not NULL
+	
+)
+WITH (
+	OIDS=FALSE
+) ;
+
+
 
 ---------------- FUNCTIONS ----------------
 
@@ -670,30 +681,82 @@ $function$;
 
 -- Fetch all button styles
 CREATE OR REPLACE FUNCTION public.get_button_styles_sp()
- RETURNS TABLE(button_id uuid, button_color varchar(18), button_text varchar(50), button_link text)
+ RETURNS TABLE(button_id uuid, button_color varchar(18), button_text varchar(50), button_link text, is_hiding boolean)
  LANGUAGE sql
 AS $function$
-	select button_id, button_color, button_text, button_link
+	select button_id, button_color, button_text, button_link, is_hiding
 	from public.button_styles
 $function$;
 
 
 -- Insert/Update button styles
 -- INSERT PREDICTION
-CREATE OR REPLACE FUNCTION public.insert_button_style_sp(id uuid, color varchar(18), txt varchar(50), link text)
+CREATE OR REPLACE FUNCTION public.insert_button_style_sp(id uuid, color varchar(18), txt varchar(50), link text, hiding boolean)
  RETURNS TABLE(returnid uuid)
  LANGUAGE plpgsql
 AS $function$
 begin
 	-- insert
-		insert into public.button_styles(button_id, button_color, button_text, button_link)
-		values (id, color, txt, link) on conflict(button_id) 
+		insert into public.button_styles(button_id, button_color, button_text, button_link, is_hiding)
+		values (id, color, txt, link, hiding) on conflict(button_id) 
 		do update
 		set
 		button_id = id,
 		button_color = color,
 		button_text = txt,
-		button_link = link;
+		button_link = link,
+		is_hiding = hiding;
 	return query
 	select s.button_id as returnid from public.button_styles s where s.button_id = id;
 end $function$;
+
+
+--- function for getting matches by event for result
+CREATE OR REPLACE FUNCTION public.getmatchesbyeventforresults(event integer)
+ RETURNS TABLE(id integer, gameid integer, game text, competitorid smallint, competitor text)
+ LANGUAGE sql
+AS $function$
+
+	select m.id     as id
+	     , g.id     as gameid
+	     , g."name" as gamename
+	     , c.id     as competitorid
+	     , c."name" as competitor
+	from public.matches as m
+	join public.games as g
+	  on m.game = g.id
+	join public.participants as p
+	  on m.id = p."match"
+	join public.competitors as c
+	  on p.competitor = c.id
+	where m.event = $1
+	  and c."name" != 'Skip this'
+	order by m.id;
+
+$function$
+
+
+-- Updating and getting titles
+CREATE OR REPLACE FUNCTION public.updateTitle(varchar)
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+declare 
+	newtitle varchar(100) = $1;
+BEGIN
+    -- setting title for them all
+    update public.webpagetitle
+    set title = newtitle
+END
+$function$;
+
+
+CREATE OR REPLACE FUNCTION public.getwebsitetitle()
+ RETURNS TABLE(title varchar)
+ LANGUAGE sql
+AS $function$
+    -- getting first title
+	select title 
+    from public.webpagetitle
+    limit 1;
+$function$;

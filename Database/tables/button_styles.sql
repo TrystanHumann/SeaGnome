@@ -4,6 +4,7 @@ CREATE TABLE "public".button_styles (
 	button_color varchar(18) NOT NULL,
 	button_text varchar(50) NULL,
 	button_link text NULL,
+	is_hiding boolean DEFAULT true,
 	CONSTRAINT button_styles_pk PRIMARY KEY (button_id)
 )
 WITH (

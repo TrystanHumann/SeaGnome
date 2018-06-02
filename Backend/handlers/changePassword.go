@@ -12,7 +12,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/xid"
-	"github.com/trystanhumann/SeaGnome/Backend/types"
+	"github.com/TrystanHumann/SeaGnome/Backend/types"
 )
 
 // ChangePassword : Handles changing of a password

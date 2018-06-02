@@ -11,7 +11,7 @@ import (
 	"github.com/rs/xid"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/trystanhumann/SeaGnome/Backend/types"
+	"github.com/TrystanHumann/SeaGnome/Backend/types"
 )
 
 // Auth : Handles requests dealing with matches

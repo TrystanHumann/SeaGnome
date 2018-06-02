@@ -59,6 +59,14 @@
             <label class="btn btn-primary" style="margin-top:5px;" for="img">Upload Background</label>
           </div>
         </div>
+        <div class="lg-col-2" style="padding-right:25px;text-align:center;">
+          <h2>Change Title</h2>
+          <div style="padding-top:5px;text-align:center;">
+            <input type="text" name="title" [(ngModel)]="webpageTitle" placeholder="Title" style="display:block;border-radius:5px;height:25px;margin: 5px 5px;border: 0;padding:5px;">
+
+            <button class="btn btn-primary" type="submit" style="display:block;margin:5px 5px;" (click)="updateTitle()">Update Webpage Title</button>
+          </div>
+        </div>
       </div>
       <div class="flexBoxCustomContainerRow">
         <h2 style="position: relative;top:-15%;left:50%;transform: translateX(-50%);">Manage Events</h2>
@@ -140,7 +148,7 @@
               <a class="btn btn-primary" [attr.href]="buttonStyleSelected.button_link" [ngStyle]="{ 'background-color': buttonStyleSelected.button_color, 'border-color': buttonStyleSelected.button_color }">{{buttonStyleSelected.button_text}}</a>
               <br />
               <select [(ngModel)]="buttonStyleSelected" style="width:75%;margin-top:5px;">
-                <option *ngFor="let bStyle of buttonStyleArray" [ngValue]="bStyle">{{bStyle.button_id}}</option>
+                <option *ngFor="let bStyle of buttonStyleArray" [ngValue]="bStyle">{{bStyle.button_text}}</option>
               </select>
               <div class="form-group">
                 <label for="b_color" style="margin-top:15px;">Color: </label>
@@ -151,6 +159,9 @@
                 />
                 <label for="b_link" style="margin-top:15px;">Link: </label>
                 <input type="text" class="form-control" id="b_link" required [(ngModel)]="buttonStyleSelected.button_link" name="b_link"
+                />
+                <label for="b_hiding" style="margin-top:15px;">Show button: </label>
+                <input type="checkbox" class="form-control" id="b_hiding" required [(ngModel)]="buttonStyleSelected.is_hiding" name="b_hiding"
                 />
                 <button class="btn btn-primary" style="margin-top:15px;" type="submit" (click)="submitStyle();">Submit</button>
               </div>
