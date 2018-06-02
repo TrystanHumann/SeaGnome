@@ -148,7 +148,7 @@
               <a class="btn btn-primary" [attr.href]="buttonStyleSelected.button_link" [ngStyle]="{ 'background-color': buttonStyleSelected.button_color, 'border-color': buttonStyleSelected.button_color }">{{buttonStyleSelected.button_text}}</a>
               <br />
               <select [(ngModel)]="buttonStyleSelected" style="width:75%;margin-top:5px;">
-                <option *ngFor="let bStyle of buttonStyleArray" [ngValue]="bStyle">{{bStyle.button_id}}</option>
+                <option *ngFor="let bStyle of buttonStyleArray" [ngValue]="bStyle">{{bStyle.button_text}}</option>
               </select>
               <div class="form-group">
                 <label for="b_color" style="margin-top:15px;">Color: </label>
